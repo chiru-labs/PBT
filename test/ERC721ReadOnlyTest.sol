@@ -5,7 +5,6 @@ import "forge-std/Test.sol";
 import "../src/mocks/ERC721ReadOnlyMock.sol";
 
 contract ERC721ReadOnlyTest is Test {
-
     address public user1 = vm.addr(1);
     address public user2 = vm.addr(2);
     uint256 public tokenId = 1;
