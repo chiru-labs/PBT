@@ -8,6 +8,7 @@ contract PBTSimpleTest is Test {
     PBTSimpleMock public pbt;
     uint128 public tokenId1 = 1;
     uint128 public tokenId2 = 2;
+    uint128 public tokenId3 = 3;
     address public user1 = vm.addr(1);
     address public user2 = vm.addr(2);
     address public chipAddr1 = vm.addr(101);
@@ -145,5 +146,41 @@ contract PBTSimpleTest is Test {
         assertEq(td4.tokenId, tokenId2);
         assertEq(td4.chipAddress, chipAddr4);
         assertEq(td4.set, true);
+    }
+
+    function testTokenIdFor() public {
+        // This will fail because chipAddr3 isn't set in tokenDatas
+        vm.expectRevert(NoMappedTokenForChip.selector);
+        pbt.tokenIdFor(chipAddr3);
+
+        // Set chipAddr3 to tokenDatas
+        address[] memory chipAddresses = new address[](1);
+        chipAddresses[0] = chipAddr3;
+        uint128[] memory tokenIds = new uint128[](1);
+        tokenIds[0] = tokenId3;
+        pbt.seedChipToTokenMapping(chipAddresses, tokenIds, true);
+
+        // Should error out because tokenId3 has not been minted
+        vm.expectRevert(NoMintedTokenForChip.selector);
+        pbt.tokenIdFor(chipAddr3);
+
+        // Mint token, should no longer error
+        pbt.mint(user1, tokenId3);
+        assertEq(pbt.tokenIdFor(chipAddr3), tokenId3);
+    }
+
+    function testTokenIdMappedFor() public {
+        // This will fail because chipAddr3 isn't set in tokenDatas
+        vm.expectRevert(NoMappedTokenForChip.selector);
+        pbt.tokenIdMappedFor(chipAddr3);
+
+        // Set chipAddr3 to tokenDatas
+        address[] memory chipAddresses = new address[](1);
+        chipAddresses[0] = chipAddr3;
+        uint128[] memory tokenIds = new uint128[](1);
+        tokenIds[0] = tokenId3;
+        pbt.seedChipToTokenMapping(chipAddresses, tokenIds, true);
+
+        assertEq(pbt.tokenIdMappedFor(chipAddr3), tokenId3);
     }
 }
