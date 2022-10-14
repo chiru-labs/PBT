@@ -220,17 +220,8 @@ contract PBTSimpleTest is Test {
 
         vm.expectEmit(true, true, true, true);
         emit PBTMint(tokenId1, chipAddr1);
-        pbt.mintTokenWithChip(chipSignature, blockNumber);
-        assertEq(pbt.balanceOf(user1), 1);
-    }
-
-    function testMintTokenFromTokenData() public {
-        PBTSimple.TokenData memory tokenData = PBTSimple.TokenData({tokenId: 1, chipAddress: chipAddr1, set: true});
-
-        vm.prank(user1);
-        vm.expectEmit(true, true, true, true);
-        emit PBTMint(tokenId1, chipAddr1);
-        pbt.mintTokenFromTokenData(tokenData);
+        uint256 tokenId = pbt.mintTokenWithChip(chipSignature, blockNumber);
+        assertEq(tokenId, tokenId1);
         assertEq(pbt.balanceOf(user1), 1);
     }
 
