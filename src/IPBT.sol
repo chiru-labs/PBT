@@ -36,7 +36,7 @@ interface IPBT {
     /// @dev Throws if there is no existing token for the chip in the collection.
     /// @param chipAddress The address for the chip embedded in the physical item (computed from the chip's public key).
     /// @return The token id for the passed in chip address.
-    function tokenIdFor(address chipAddress) external view virtual returns (uint256);
+    function tokenIdFor(address chipAddress) external view returns (uint256);
 
     /// @notice Returns true if the chip for the specified token id is the signer of the signature of the payload.
     /// @dev Throws if tokenId does not exist in the collection.
@@ -47,7 +47,6 @@ interface IPBT {
     function isChipSignatureForToken(uint256 tokenId, bytes32 payload, bytes calldata signature)
         external
         view
-        virtual
         returns (bool);
 
     /// @notice Transfers the token into the message sender's wallet.
@@ -63,10 +62,10 @@ interface IPBT {
         bytes calldata signatureFromChip,
         uint256 blockNumberUsedInSig,
         bool useSafeTransferFrom
-    ) external virtual;
+    ) external;
 
     /// @notice Calls transferTokenWithChip as defined above, with useSafeTransferFrom set to false.
-    function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) external virtual;
+    function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) external;
 
     /// @notice Emitted when a token is minted
     event PBTMint(uint256 indexed tokenId, address indexed chipAddress);
