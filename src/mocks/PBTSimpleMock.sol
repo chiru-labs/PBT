@@ -30,10 +30,6 @@ contract PBTSimpleMock is PBTSimple {
         _mintTokenWithChip(signatureFromChip, blockNumberUsedInSig);
     }
 
-    function mintTokenFromTokenData(TokenData memory tokenData) public {
-        _mintTokenFromTokenData(tokenData);
-    }
-
     function getTokenDataForChipSignature(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
         public
         returns (TokenData memory)

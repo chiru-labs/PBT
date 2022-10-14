@@ -224,16 +224,6 @@ contract PBTSimpleTest is Test {
         assertEq(pbt.balanceOf(user1), 1);
     }
 
-    function testMintTokenFromTokenData() public {
-        PBTSimple.TokenData memory tokenData = PBTSimple.TokenData({tokenId: 1, chipAddress: chipAddr1, set: true});
-
-        vm.prank(user1);
-        vm.expectEmit(true, true, true, true);
-        emit PBTMint(tokenId1, chipAddr1);
-        pbt.mintTokenFromTokenData(tokenData);
-        assertEq(pbt.balanceOf(user1), 1);
-    }
-
     function testTransferTokenWithChip(bool useSafeTranfer) public setChipTokenMapping mintedTokens {
         uint256 blockNumber = 10;
 

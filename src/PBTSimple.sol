@@ -119,10 +119,6 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     // Contract should check that (1) recentBlockhash is a recent blockhash, (2) receivingAddress === to, and (3) the signing chip is allowlisted.
     function _mintTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) internal {
         TokenData memory tokenData = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
-        _mintTokenFromTokenData(tokenData);
-    }
-
-    function _mintTokenFromTokenData(TokenData memory tokenData) internal {
         uint128 tokenId = tokenData.tokenId;
         _mint(_msgSender(), tokenId);
         emit PBTMint(tokenId, tokenData.chipAddress);
