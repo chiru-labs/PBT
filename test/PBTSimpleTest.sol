@@ -220,7 +220,8 @@ contract PBTSimpleTest is Test {
 
         vm.expectEmit(true, true, true, true);
         emit PBTMint(tokenId1, chipAddr1);
-        pbt.mintTokenWithChip(chipSignature, blockNumber);
+        uint256 tokenId = pbt.mintTokenWithChip(chipSignature, blockNumber);
+        assertEq(tokenId, tokenId1);
         assertEq(pbt.balanceOf(user1), 1);
     }
 
