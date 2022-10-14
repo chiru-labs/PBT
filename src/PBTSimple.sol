@@ -48,7 +48,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         if (tokenIds.length != chipAddresses.length) {
             revert ArrayLengthMismatch();
         }
-        for (uint256 i = 0; i < tokenIds.length; i++) {
+        for (uint256 i = 0; i < tokenIds.length; ++i) {
             address chipAddress = chipAddresses[i];
             uint128 tokenId = tokenIds[i];
             if (throwIfTokenAlreadyMinted && _exists(tokenId)) {
@@ -65,7 +65,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         if (chipAddressesOld.length != chipAddressesNew.length) {
             revert ArrayLengthMismatch();
         }
-        for (uint256 i = 0; i < chipAddressesOld.length; i++) {
+        for (uint256 i = 0; i < chipAddressesOld.length; ++i) {
             address oldChipAddress = chipAddressesOld[i];
             TokenData memory oldTokenData = _tokenDatas[oldChipAddress];
             if (!oldTokenData.set) {
@@ -90,12 +90,10 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     }
 
     function tokenIdMappedFor(address chipAddress) public view returns (uint256) {
-        TokenData memory tokenData = _tokenDatas[chipAddress];
-        if (!tokenData.set) {
+        if (!_tokenDatas[chipAddress].set) {
             revert NoMappedTokenForChip();
         }
-        uint256 tokenId = tokenData.tokenId;
-        return tokenId;
+        return _tokenDatas[chipAddress].tokenId;
     }
 
     // Returns true if the signer of the signature of the payload is the chip for the token id
@@ -110,8 +108,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         }
         bytes32 signedHash = keccak256(abi.encodePacked(payload)).toEthSignedMessageHash();
         address chipAddr = signedHash.recover(signature);
-        TokenData memory tokenData = _tokenDatas[chipAddr];
-        return tokenData.set && tokenData.tokenId == tokenId;
+        return _tokenDatas[chipAddr].set && _tokenDatas[chipAddr].tokenId == tokenId;
     }
 
     //
@@ -148,8 +145,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         uint256 blockNumberUsedInSig,
         bool useSafeTransferFrom
     ) internal virtual {
-        TokenData memory tokenData = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
-        uint128 tokenId = tokenData.tokenId;
+        uint128 tokenId = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig).tokenId;
         if (useSafeTransferFrom) {
             _safeTransfer(ownerOf(tokenId), _msgSender(), tokenId, "");
         } else {
