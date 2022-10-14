@@ -12,15 +12,15 @@ import "@openzeppelin/contracts/utils/Strings.sol";
  * @dev Contract for PBTs (Physical-Bound Tokens).
  * NFTs that are backed by a physical asset, through a chip embedded in the physical asset.
  * Note: this assumes that the chip remains attached to the physical object. Enforcing that is out of scope here.
- * 
+ *
  * Extension to 721, in which the 721 implementation must not support public transfer methods that are not authenticated by a chip signature.
  * This is because such transfers would break any guarantees that an NFT is backed by the physical chip.
- * 
+ *
  * Note: the ERC-165 identifier for this interface is <todo>.
  * TODO: print interface id here.
- * 
- * 
- * 
+ *
+ *
+ *
  * (This part borrowed from https://github.com/Verilink/ERC721Physical) Requirements for such chip:
  * Capable of cryptographically secure generation of asymmetric key pairs
  * Capable of securely storing the private key of the asymmetric key pair with no interface
@@ -28,7 +28,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
  * Capable of retrieving the public key of the asymmetric key pair
  * There are no restrictions on the asymmetric cryptographic algorithm, communication methods, or power requirements.
  * The recommended chip is a passive device supporting NFC and secp256k1 ECC.
- * 
+ *
  */
 
 interface IPBT {
@@ -36,11 +36,7 @@ interface IPBT {
     /// @dev Throws if there is no existing token for the chip in the collection.
     /// @param chipAddress The address for the chip embedded in the physical item (computed from the chip's public key).
     /// @return The token id for the passed in chip address.
-    function tokenIdFor(address chipAddress)
-        external
-        view
-        virtual
-        returns (uint256);
+    function tokenIdFor(address chipAddress) external view virtual returns (uint256);
 
     /// @notice Returns true if the chip for the specified token id is the signer of the signature of the payload.
     /// @dev Throws if tokenId does not exist in the collection.
@@ -48,11 +44,7 @@ interface IPBT {
     /// @param payload Arbitrary data that is signed by the chip to produce the signature param.
     /// @param signature Chip's signature of the passed-in payload.
     /// @return Whether the signature of the payload was signed by the chip linked to the token id.
-    function isChipSignatureForToken(
-        uint256 tokenId,
-        bytes32 payload,
-        bytes calldata signature
-    )
+    function isChipSignatureForToken(uint256 tokenId, bytes32 payload, bytes calldata signature)
         external
         view
         virtual
@@ -71,26 +63,15 @@ interface IPBT {
         bytes calldata signatureFromChip,
         uint256 blockNumberUsedInSig,
         bool useSafeTransferFrom
-    )
-        external
-        virtual;
+    ) external virtual;
 
     /// @notice Calls transferTokenWithChip as defined above, with useSafeTransferFrom set to false.
-    function transferTokenWithChip(
-        bytes calldata signatureFromChip,
-        uint256 blockNumberUsedInSig
-    )
-        external
-        virtual;
+    function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) external virtual;
 
     /// @notice Emitted when a token is minted
     event PBTMint(uint256 indexed tokenId, address indexed chipAddress);
 
     /// @notice Emitted when a token is mapped to a different chip.
     /// Chip replacements may be useful in certain scenarios (e.g. chip defect).
-    event PBTChipRemapping(
-        uint256 indexed tokenId,
-        address indexed oldChipAddress,
-        address indexed newChipAddress
-    );
+    event PBTChipRemapping(uint256 indexed tokenId, address indexed oldChipAddress, address indexed newChipAddress);
 }

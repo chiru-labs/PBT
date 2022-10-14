@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import "forge-std/Test.sol";
 import "./IPBT.sol";
 import "./ERC721ReadOnly.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
@@ -30,19 +31,12 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
      */
     mapping(address => TokenData) _tokenDatas;
 
-    constructor(string memory name_, string memory symbol_)
-        ERC721ReadOnly(name_, symbol_)
-    {}
+    constructor(string memory name_, string memory symbol_) ERC721ReadOnly(name_, symbol_) {}
 
     // Should only be called for tokenIds that have not yet been minted
     // If the tokenId has already been minted, use _updateChips instead
     // TODO: consider preventing multiple chip addresses mapping to the same tokenId (store a tokenId->chip mapping)
-    function _seedChipToTokenMapping(
-        address[] memory chipAddresses,
-        uint128[] memory tokenIds
-    )
-        internal
-    {
+    function _seedChipToTokenMapping(address[] memory chipAddresses, uint128[] memory tokenIds) internal {
         _seedChipToTokenMapping(chipAddresses, tokenIds, true);
     }
 
@@ -50,9 +44,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         address[] memory chipAddresses,
         uint128[] memory tokenIds,
         bool throwIfTokenAlreadyMinted
-    )
-        internal
-    {
+    ) internal {
         if (tokenIds.length != chipAddresses.length) {
             revert ArrayLengthMismatch();
         }
@@ -69,12 +61,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     // Should only be called for tokenIds that have been minted
     // If the tokenId hasn't been minted yet, use _seedChipToTokenMapping instead
     // TODO: consider preventing multiple chip addresses mapping to the same tokenId (store a tokenId->chip mapping)
-    function _updateChips(
-        address[] calldata chipAddressesOld,
-        address[] calldata chipAddressesNew
-    )
-        internal
-    {
+    function _updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew) internal {
         if (chipAddressesOld.length != chipAddressesNew.length) {
             revert ArrayLengthMismatch();
         }
@@ -86,8 +73,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
             }
             address newChipAddress = chipAddressesNew[i];
             uint128 tokenId = oldTokenData.tokenId;
-            _tokenDatas[newChipAddress] =
-                TokenData(tokenId, newChipAddress, true);
+            _tokenDatas[newChipAddress] = TokenData(tokenId, newChipAddress, true);
             if (_exists(tokenId)) {
                 emit PBTChipRemapping(tokenId, oldChipAddress, newChipAddress);
             }
@@ -95,12 +81,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         }
     }
 
-    function tokenIdFor(address chipAddress)
-        external
-        view
-        override
-        returns (uint256)
-    {
+    function tokenIdFor(address chipAddress) external view override returns (uint256) {
         uint256 tokenId = tokenIdMappedFor(chipAddress);
         if (!_exists(tokenId)) {
             revert NoMintedTokenForChip();
@@ -108,11 +89,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         return tokenId;
     }
 
-    function tokenIdMappedFor(address chipAddress)
-        public
-        view
-        returns (uint256)
-    {
+    function tokenIdMappedFor(address chipAddress) public view returns (uint256) {
         TokenData memory tokenData = _tokenDatas[chipAddress];
         if (!tokenData.set) {
             revert NoMappedTokenForChip();
@@ -122,11 +99,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     }
 
     // Returns true if the signer of the signature of the payload is the chip for the token id
-    function isChipSignatureForToken(
-        uint256 tokenId,
-        bytes32 payload,
-        bytes memory signature
-    )
+    function isChipSignatureForToken(uint256 tokenId, bytes32 payload, bytes memory signature)
         public
         view
         override
@@ -135,8 +108,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         if (!_exists(tokenId)) {
             revert NoMintedTokenForChip();
         }
-        bytes32 signedHash =
-            keccak256(abi.encodePacked(payload)).toEthSignedMessageHash();
+        bytes32 signedHash = keccak256(abi.encodePacked(payload)).toEthSignedMessageHash();
         address chipAddr = signedHash.recover(signature);
         TokenData memory tokenData = _tokenDatas[chipAddr];
         return tokenData.set && tokenData.tokenId == tokenId;
@@ -148,14 +120,8 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     //    signatureFromChip: signature(receivingAddress + recentBlockhash), signed by an approved chip
     //
     // Contract should check that (1) recentBlockhash is a recent blockhash, (2) receivingAddress === to, and (3) the signing chip is allowlisted.
-    function _mintTokenWithChip(
-        bytes calldata signatureFromChip,
-        uint256 blockNumberUsedInSig
-    )
-        internal
-    {
-        TokenData memory tokenData =
-            _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
+    function _mintTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) internal {
+        TokenData memory tokenData = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
         _mintTokenFromTokenData(tokenData);
     }
 
@@ -165,13 +131,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         emit PBTMint(tokenId, tokenData.chipAddress);
     }
 
-    function transferTokenWithChip(
-        bytes calldata signatureFromChip,
-        uint256 blockNumberUsedInSig
-    )
-        public
-        override
-    {
+    function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) public override {
         transferTokenWithChip(signatureFromChip, blockNumberUsedInSig, false);
     }
 
@@ -179,25 +139,16 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         bytes calldata signatureFromChip,
         uint256 blockNumberUsedInSig,
         bool useSafeTransferFrom
-    )
-        public
-        override
-    {
-        _transferTokenWithChip(
-            signatureFromChip, blockNumberUsedInSig, useSafeTransferFrom
-        );
+    ) public override {
+        _transferTokenWithChip(signatureFromChip, blockNumberUsedInSig, useSafeTransferFrom);
     }
 
     function _transferTokenWithChip(
         bytes calldata signatureFromChip,
         uint256 blockNumberUsedInSig,
         bool useSafeTransferFrom
-    )
-        internal
-        virtual
-    {
-        TokenData memory tokenData =
-            _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
+    ) internal virtual {
+        TokenData memory tokenData = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
         uint128 tokenId = tokenData.tokenId;
         if (useSafeTransferFrom) {
             _safeTransfer(ownerOf(tokenId), _msgSender(), tokenId, "");
@@ -206,22 +157,17 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         }
     }
 
-    function _getTokenDataForChipSignature(
-        bytes calldata signatureFromChip,
-        uint256 blockNumberUsedInSig
-    )
+    function _getTokenDataForChipSignature(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
         internal
         returns (TokenData memory)
     {
-        if (block.number - blockNumberUsedInSig > getMaxBlockhashValidWindow())
-        {
+        // TODO: verify that block.number != blockNumberUsedInSig
+        if (block.number - blockNumberUsedInSig > getMaxBlockhashValidWindow()) {
             revert BlockNumberTooOld();
         }
 
         bytes32 blockHash = blockhash(blockNumberUsedInSig);
-        bytes32 signedHash = keccak256(
-            abi.encodePacked(_msgSender(), blockHash)
-        ).toEthSignedMessageHash();
+        bytes32 signedHash = keccak256(abi.encodePacked(_msgSender(), blockHash)).toEthSignedMessageHash();
         address chipAddr = signedHash.recover(signatureFromChip);
 
         TokenData memory tokenData = _tokenDatas[chipAddr];
@@ -231,26 +177,14 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         revert InvalidSignature();
     }
 
-    function getMaxBlockhashValidWindow()
-        public
-        pure
-        virtual
-        returns (uint256)
-    {
+    function getMaxBlockhashValidWindow() public pure virtual returns (uint256) {
         return 100;
     }
 
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override
-        returns (bool)
-    {
-        return interfaceId == type(IPBT).interfaceId
-            || super.supportsInterface(interfaceId);
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+        return interfaceId == type(IPBT).interfaceId || super.supportsInterface(interfaceId);
     }
 }
