@@ -21,7 +21,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     using ECDSA for bytes32;
 
     struct TokenData {
-        uint128 tokenId;
+        uint256 tokenId;
         address chipAddress;
         bool set;
     }
@@ -36,13 +36,13 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     // Should only be called for tokenIds that have not yet been minted
     // If the tokenId has already been minted, use _updateChips instead
     // TODO: consider preventing multiple chip addresses mapping to the same tokenId (store a tokenId->chip mapping)
-    function _seedChipToTokenMapping(address[] memory chipAddresses, uint128[] memory tokenIds) internal {
+    function _seedChipToTokenMapping(address[] memory chipAddresses, uint256[] memory tokenIds) internal {
         _seedChipToTokenMapping(chipAddresses, tokenIds, true);
     }
 
     function _seedChipToTokenMapping(
         address[] memory chipAddresses,
-        uint128[] memory tokenIds,
+        uint256[] memory tokenIds,
         bool throwIfTokenAlreadyMinted
     ) internal {
         if (tokenIds.length != chipAddresses.length) {
@@ -50,7 +50,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         }
         for (uint256 i = 0; i < tokenIds.length; ++i) {
             address chipAddress = chipAddresses[i];
-            uint128 tokenId = tokenIds[i];
+            uint256 tokenId = tokenIds[i];
             if (throwIfTokenAlreadyMinted && _exists(tokenId)) {
                 revert SeedingChipDataForExistingToken();
             }
@@ -72,7 +72,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
                 revert UpdatingChipForUnsetChipMapping();
             }
             address newChipAddress = chipAddressesNew[i];
-            uint128 tokenId = oldTokenData.tokenId;
+            uint256 tokenId = oldTokenData.tokenId;
             _tokenDatas[newChipAddress] = TokenData(tokenId, newChipAddress, true);
             if (_exists(tokenId)) {
                 emit PBTChipRemapping(tokenId, oldChipAddress, newChipAddress);
@@ -122,7 +122,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         returns (uint256)
     {
         TokenData memory tokenData = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
-        uint128 tokenId = tokenData.tokenId;
+        uint256 tokenId = tokenData.tokenId;
         _mint(_msgSender(), tokenId);
         emit PBTMint(tokenId, tokenData.chipAddress);
         return tokenId;
@@ -145,7 +145,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         uint256 blockNumberUsedInSig,
         bool useSafeTransferFrom
     ) internal virtual {
-        uint128 tokenId = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig).tokenId;
+        uint256 tokenId = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig).tokenId;
         if (useSafeTransferFrom) {
             _safeTransfer(ownerOf(tokenId), _msgSender(), tokenId, "");
         } else {
