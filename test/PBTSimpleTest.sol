@@ -9,9 +9,9 @@ contract PBTSimpleTest is Test {
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
     PBTSimpleMock public pbt;
-    uint128 public tokenId1 = 1;
-    uint128 public tokenId2 = 2;
-    uint128 public tokenId3 = 3;
+    uint256 public tokenId1 = 1;
+    uint256 public tokenId2 = 2;
+    uint256 public tokenId3 = 3;
     address public user1 = vm.addr(1);
     address public user2 = vm.addr(2);
     address public user3 = vm.addr(3);
@@ -35,7 +35,7 @@ contract PBTSimpleTest is Test {
         chipAddresses[0] = chipAddr1;
         chipAddresses[1] = chipAddr2;
 
-        uint128[] memory tokenIds = new uint128[](1);
+        uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId1;
 
         vm.expectRevert(ArrayLengthMismatch.selector);
@@ -47,7 +47,7 @@ contract PBTSimpleTest is Test {
         chipAddresses[0] = chipAddr1;
         chipAddresses[1] = chipAddr2;
 
-        uint128[] memory tokenIds = new uint128[](2);
+        uint256[] memory tokenIds = new uint256[](2);
         tokenIds[0] = tokenId1;
         tokenIds[1] = tokenId2;
 
@@ -63,7 +63,7 @@ contract PBTSimpleTest is Test {
         chipAddresses[0] = chipAddr1;
         chipAddresses[1] = chipAddr2;
 
-        uint128[] memory tokenIds = new uint128[](2);
+        uint256[] memory tokenIds = new uint256[](2);
         tokenIds[0] = tokenId1;
         tokenIds[1] = tokenId2;
 
@@ -111,7 +111,7 @@ contract PBTSimpleTest is Test {
         chipAddresses[0] = chipAddr1;
         chipAddresses[1] = chipAddr2;
 
-        uint128[] memory tokenIds = new uint128[](2);
+        uint256[] memory tokenIds = new uint256[](2);
         tokenIds[0] = tokenId1;
         tokenIds[1] = tokenId2;
 
@@ -160,7 +160,7 @@ contract PBTSimpleTest is Test {
         // Set chipAddr3 to tokenDatas
         address[] memory chipAddresses = new address[](1);
         chipAddresses[0] = chipAddr3;
-        uint128[] memory tokenIds = new uint128[](1);
+        uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId3;
         pbt.seedChipToTokenMapping(chipAddresses, tokenIds, true);
 
@@ -181,7 +181,7 @@ contract PBTSimpleTest is Test {
         // Set chipAddr3 to tokenDatas
         address[] memory chipAddresses = new address[](1);
         chipAddresses[0] = chipAddr3;
-        uint128[] memory tokenIds = new uint128[](1);
+        uint256[] memory tokenIds = new uint256[](1);
         tokenIds[0] = tokenId3;
         pbt.seedChipToTokenMapping(chipAddresses, tokenIds, true);
 

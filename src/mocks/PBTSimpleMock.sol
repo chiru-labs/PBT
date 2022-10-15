@@ -12,7 +12,7 @@ contract PBTSimpleMock is PBTSimple {
 
     function seedChipToTokenMapping(
         address[] memory chipAddresses,
-        uint128[] memory tokenIds,
+        uint256[] memory tokenIds,
         bool throwIfTokenAlreadyMinted
     ) public {
         _seedChipToTokenMapping(chipAddresses, tokenIds, throwIfTokenAlreadyMinted);
