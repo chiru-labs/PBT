@@ -19,6 +19,7 @@ contract PBTSimpleTest is Test {
     address public chipAddr2 = vm.addr(102);
     address public chipAddr3 = vm.addr(103);
     address public chipAddr4 = vm.addr(104);
+    uint256 public blockNumber = 10;
 
     function setUp() public {
         pbt = new PBTSimpleMock("PBTSimple", "PBTS");
@@ -208,16 +209,13 @@ contract PBTSimpleTest is Test {
     }
 
     function testMintTokenWithChip() public setChipTokenMapping {
-        uint256 blockNumber = 10;
+        vm.roll(blockNumber + 1);
 
         // Create inputs
         bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
         bytes memory chipSignature = _createSignature(payload, 101);
 
-        // Change block number
-        vm.roll(blockNumber);
         vm.prank(user1);
-
         vm.expectEmit(true, true, true, true);
         emit PBTMint(tokenId1, chipAddr1);
         uint256 tokenId = pbt.mintTokenWithChip(chipSignature, blockNumber);
@@ -226,15 +224,13 @@ contract PBTSimpleTest is Test {
     }
 
     function testTransferTokenWithChip(bool useSafeTranfer) public setChipTokenMapping mintedTokens {
-        uint256 blockNumber = 10;
+        vm.roll(blockNumber + 1);
 
         // Create inputs
         bytes memory payload = abi.encodePacked(user2, blockhash(blockNumber));
         bytes memory chipSignature = _createSignature(payload, 101);
 
-        vm.roll(blockNumber);
         vm.prank(user2);
-
         vm.expectEmit(true, true, true, true);
         emit Transfer(user1, user2, 1);
         pbt.transferTokenWithChip(chipSignature, blockNumber, useSafeTranfer);
@@ -244,8 +240,18 @@ contract PBTSimpleTest is Test {
     }
 
     function testGetTokenDataForChipSignatureInvalidBlockNumber() public setChipTokenMapping {
-        uint256 blockNumber = 10;
+        vm.roll(blockNumber);
 
+        // Create inputs
+        bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
+        bytes memory chipSignature = _createSignature(payload, 101);
+
+        vm.prank(user1);
+        vm.expectRevert(InvalidBlockNumber.selector);
+        pbt.getTokenDataForChipSignature(chipSignature, blockNumber);
+    }
+
+    function testGetTokenDataForChipSignatureBlockNumTooOld() public setChipTokenMapping {
         // Create inputs
         bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
         bytes memory chipSignature = _createSignature(payload, 101);
@@ -258,7 +264,6 @@ contract PBTSimpleTest is Test {
     }
 
     function testGetTokenDataForChipSignature() public setChipTokenMapping {
-        uint256 blockNumber = 10;
         // Change block number to the next block to set blockHash(blockNumber)
         vm.roll(blockNumber + 1);
 
@@ -276,7 +281,6 @@ contract PBTSimpleTest is Test {
     }
 
     function testGetTokenDataForChipSignatureInvalid() public setChipTokenMapping {
-        uint256 blockNumber = 10;
         // Change block number to the next block to set blockHash(blockNumber)
         vm.roll(blockNumber + 1);
 
