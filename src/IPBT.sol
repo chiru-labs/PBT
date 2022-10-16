@@ -9,26 +9,8 @@ import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
- * @dev Contract for PBTs (Physical-Bound Tokens).
+ * @dev Contract for PBTs (Physical Backed Tokens).
  * NFTs that are backed by a physical asset, through a chip embedded in the physical asset.
- * Note: this assumes that the chip remains attached to the physical object. Enforcing that is out of scope here.
- *
- * Extension to 721, in which the 721 implementation must not support public transfer methods that are not authenticated by a chip signature.
- * This is because such transfers would break any guarantees that an NFT is backed by the physical chip.
- *
- * Note: the ERC-165 identifier for this interface is <todo>.
- * TODO: print interface id here.
- *
- *
- *
- * (This part borrowed from https://github.com/Verilink/ERC721Physical) Requirements for such chip:
- * Capable of cryptographically secure generation of asymmetric key pairs
- * Capable of securely storing the private key of the asymmetric key pair with no interface
- * Capable of signing messages from the private key of the asymmetric key pair
- * Capable of retrieving the public key of the asymmetric key pair
- * There are no restrictions on the asymmetric cryptographic algorithm, communication methods, or power requirements.
- * The recommended chip is a passive device supporting NFC and secp256k1 ECC.
- *
  */
 
 interface IPBT {
