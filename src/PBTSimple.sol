@@ -61,6 +61,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
 
     // Should only be called for tokenIds that have been minted
     // If the tokenId hasn't been minted yet, use _seedChipToTokenMapping instead
+    // Should only be used and called with care and rails to avoid a centralized entity swapping out valid chips.
     // TODO: consider preventing multiple chip addresses mapping to the same tokenId (store a tokenId->chip mapping)
     function _updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew) internal {
         if (chipAddressesOld.length != chipAddressesNew.length) {
