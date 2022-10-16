@@ -30,7 +30,10 @@ On a high level:
 - The NFT can only be transferred to a different owner if a signature from the chip is supplied to the contract.
 - This guarantees that a token cannot be transferred without consent from the owner of the physical item.
 
-More details available in the [EIP](https://www.pbt.io/) and inlined into `IPBT.sol`. Feel free to contact [@2pmflow](https://twitter.com/2pmflow) if you have any questions.
+More details available in the [EIP](https://www.pbt.io/) and inlined into `IPBT.sol`.
+
+
+Feel free to contact [@2pmflow](https://twitter.com/2pmflow) for any questions.
 
 ^ TODO: update EIP URL
 
