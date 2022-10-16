@@ -32,10 +32,38 @@ On a high level:
 
 More details available in the [EIP](https://www.pbt.io/) and inlined into `IPBT.sol`.
 
-
-Feel free to contact [@2pmflow](https://twitter.com/2pmflow) for any questions.
-
 ^ TODO: update EIP URL
+
+
+#### Reference Implementation
+
+A simple mint for a physical drop could look something like this:
+```
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@chiru-labs/pbt/src/PBTSimple.sol";
+
+contract Example is PBTSimple, Ownable {
+
+    /// @notice Initialize a mapping from chipAddress to tokenId.
+    /// @param chipAddresses The addresses derived from the public keys of the chips
+    constructor(address[] calldata chipAddresses, uint256[] calldata tokenIds)
+        PBTSimple("Example", "EXAMPLE")
+    {
+        _seedChipToTokenMapping(chipAddresses, tokenIds);
+    }
+
+    /// @param signatureFromChip The signature is an EIP-191 signature of (msgSender, blockhash),
+    ///        where blockhash is the block hash for a recent block (blockNumberUsedInSig).
+    /// @dev We will soon release a client-side library that helps with signature generation.
+    function mintPBT(
+        bytes calldata signatureFromChip,
+        uint256 blockNumberUsedInSig
+    ) external {
+        _mintTokenWithChip(signatureFromChip, blockNumberUsedInSig);
+    }
+}
+```
+As mentioned above, this repo is still in beta and more documentation is on its way. Feel free to contact [@2pmflow](https://twitter.com/2pmflow) if you have any questions.
 
 ## Contributing
 
