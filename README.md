@@ -5,11 +5,17 @@ NFT collectors enjoy collecting digital assets and sharing them with others onli
 
 - Verification of authenticity of the physical item requires action from a trusted entity (e.g. StockX).
 
-PBT aims to mitigate these issues in a decentralized way through a new token standard (an extension of EIP-721):
+PBT aims to mitigate these issues in a decentralized way through a new token standard (an extension of EIP-721).
 
-[pbt.io](https://www.pbt.io/) | [EIP](https://www.pbt.io/) | [Blog](https://www.pbt.io/)  <--- (TODO: update these urls)
+From the [Azuki](https://twitter.com/AzukiOfficial) team.
+**Chiru Labs is not liable for any outcomes as a result of using PBT**, DYOR. Repo still in beta.
 
-From the [Azuki](https://twitter.com/AzukiOfficial) team. **Chiru Labs is not liable for any outcomes as a result of using PBT**, DYOR. Repo still in beta.
+
+## Resources
+
+- [pbt.io](https://www.pbt.io/)
+- [EIP (Draft)](https://www.pbt.io/) <--- (TODO: update url)
+- [Blog](https://www.pbt.io/)  <--- (TODO: update url)
 
 
 ## How does it work?
@@ -65,6 +71,7 @@ contract Example is PBTSimple, Ownable {
 }
 ```
 As mentioned above, this repo is still in beta and more documentation is on its way. Feel free to contact [@2pmflow](https://twitter.com/2pmflow) if you have any questions.
+
 
 ## Contributing
 
