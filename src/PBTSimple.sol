@@ -12,6 +12,7 @@ error NoMappedTokenForChip();
 error ArrayLengthMismatch();
 error SeedingChipDataForExistingToken();
 error UpdatingChipForUnsetChipMapping();
+error InvalidBlockNumber();
 error BlockNumberTooOld();
 
 /**
@@ -157,9 +158,16 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         internal
         returns (TokenData memory)
     {
-        // TODO: verify that block.number != blockNumberUsedInSig
-        if (block.number - blockNumberUsedInSig > getMaxBlockhashValidWindow()) {
-            revert BlockNumberTooOld();
+        // The blockNumberUsedInSig must be in a previous block because the blockhash of the current
+        // block does not exist yet.
+        if (block.number <= blockNumberUsedInSig) {
+            revert InvalidBlockNumber();
+        }
+
+        unchecked {
+            if (block.number - blockNumberUsedInSig > getMaxBlockhashValidWindow()) {
+                revert BlockNumberTooOld();
+            }
         }
 
         bytes32 blockHash = blockhash(blockNumberUsedInSig);
