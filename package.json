@@ -1,5 +1,5 @@
 {
-    "name": "pbt-repo",
+    "name": "@chiru-labs/pbt",
     "version": "0.1.0",
     "description": "Physically Backed Token Contracts in Solidity",
     "main": "index.js",
