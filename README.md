@@ -28,7 +28,7 @@ This approach assumes that the physical item must have a chip attached to it tha
 - the ability to sign messages from the private key of the asymmetric keypair
 - the ability for one to retrieve only the public key of the asymmetric keypair (private key non-extractable)
 
-The approach also requires that the contract uses an account-bound implementation of EIP-721 (where all EIP-721 functions that transfer must throw, e.g. the "read only NFT registry" implementation referenced in EIP-721). This ensures that ownership of the physical item is required to initiate transfers and manage ownership of the NFT, through a new function introduced in this interface described below.
+The approach also requires that the contract uses an account-bound implementation of EIP-721 (where all EIP-721 functions that transfer must throw, e.g. the "read only NFT registry" implementation referenced in EIP-721). This ensures that ownership of the physical item is required to initiate transfers and manage ownership of the NFT, through a new function introduced in `IPBT.sol` (`transferTokenWithChip`).
 
 #### Approach
 
