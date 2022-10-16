@@ -1,17 +1,17 @@
 {
     "name": "@chiru-labs/pbt",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Physically Backed Token Contracts in Solidity",
     "main": "index.js",
     "files": [
-      "/src/**/*.sol"
+        "/src/**/*.sol"
     ],
     "dependencies": {
-      "@openzeppelin/contracts": "^4.7.3"
+        "@openzeppelin/contracts": "^4.7.3"
     },
     "repository": {
-      "type": "git",
-      "url": "git@github.com-cygaar:chiru-labs/PBT.git"
+        "type": "git",
+        "url": "git@github.com-cygaar:chiru-labs/PBT.git"
     },
     "author": "chiru-labs",
     "license": "MIT"
