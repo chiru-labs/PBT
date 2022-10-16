@@ -15,7 +15,7 @@ From the [Azuki](https://twitter.com/AzukiOfficial) team. **Chiru Labs is not li
 
 #### Requirements
 
-This approach assumes that the physical item must have a chip attached to it that fulfills the following requirements ([Kong](https://medium.com/kong-land-embassy/eternal-physical-crypto-b487ee8a1553) is one such vendor for these chips):
+This approach assumes that the physical item must have a chip attached to it that fulfills the following requirements ([Kong](https://arx.org/) is one such vendor for these chips):
 
 - the ability to securely generate and store an ECDSA secp256k1 asymmetric keypair
 - the ability to sign messages from the private key of the asymmetric keypair
