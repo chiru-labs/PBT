@@ -14,8 +14,8 @@ From the [Azuki](https://twitter.com/AzukiOfficial) team.
 ## Resources
 
 - [pbt.io](https://www.pbt.io/)
-- [EIP (Draft)](https://www.pbt.io/) <--- (TODO: update url)
-- [Blog](https://www.pbt.io/)  <--- (TODO: update url)
+- [EIP (Draft)](https://github.com/ethereum/EIPs/pull/5791)
+- [Blog](https://www.azuki.com/updates/pbt)
 
 
 ## How does it work?
@@ -37,10 +37,7 @@ On a high level:
 - The NFT can only be transferred to a different owner if a signature from the chip is supplied to the contract.
 - This guarantees that a token cannot be transferred without consent from the owner of the physical item.
 
-More details available in the [EIP](https://www.pbt.io/) and inlined into `IPBT.sol`.
-
-^ TODO: update EIP URL
-
+More details available in the [EIP](https://github.com/ethereum/EIPs/pull/5791) and inlined into `IPBT.sol`.
 
 #### Reference Implementation
 
