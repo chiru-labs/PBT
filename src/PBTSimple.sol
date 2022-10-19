@@ -45,10 +45,11 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         uint256[] memory tokenIds,
         bool throwIfTokenAlreadyMinted
     ) internal {
-        if (tokenIds.length != chipAddresses.length) {
+        uint256 tokenIdsLength = tokenIds.length;
+        if (tokenIdsLength != chipAddresses.length) {
             revert ArrayLengthMismatch();
         }
-        for (uint256 i = 0; i < tokenIds.length; ++i) {
+        for (uint256 i = 0; i < tokenIdsLength; ++i) {
             address chipAddress = chipAddresses[i];
             uint256 tokenId = tokenIds[i];
             if (throwIfTokenAlreadyMinted && _exists(tokenId)) {
