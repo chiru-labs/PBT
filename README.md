@@ -43,7 +43,7 @@ More details available in the [EIP](https://github.com/ethereum/EIPs/pull/5791) 
 
 A simple mint for a physical drop could look something like this:
 
-```
+```solidity
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chiru-labs/pbt/src/PBTSimple.sol";
 
