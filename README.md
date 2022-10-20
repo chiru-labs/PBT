@@ -50,7 +50,7 @@ contract Example is PBTSimple, Ownable {
 
     /// @notice Initialize a mapping from chipAddress to tokenId.
     /// @param chipAddresses The addresses derived from the public keys of the chips
-    constructor(address[] calldata chipAddresses, uint256[] calldata tokenIds)
+    constructor(address[] memory chipAddresses, uint256[] memory tokenIds)
         PBTSimple("Example", "EXAMPLE")
     {
         _seedChipToTokenMapping(chipAddresses, tokenIds);
