@@ -157,6 +157,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
 
     function _getTokenDataForChipSignature(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
         internal
+        view
         returns (TokenData memory)
     {
         // The blockNumberUsedInSig must be in a previous block because the blockhash of the current
