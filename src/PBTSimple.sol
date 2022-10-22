@@ -45,7 +45,8 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         uint256[] memory tokenIds,
         bool throwIfTokenAlreadyMinted
     ) internal {
-        if (tokenIds.length != chipAddresses.length) {
+        uint256 tokenIdsLength = tokenIds.length;
+        if (tokenIdsLength != chipAddresses.length) {
             revert ArrayLengthMismatch();
         }
         for (uint256 i = 0; i < tokenIds.length;) {
@@ -162,6 +163,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
 
     function _getTokenDataForChipSignature(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
         internal
+        view
         returns (TokenData memory)
     {
         // The blockNumberUsedInSig must be in a previous block because the blockhash of the current

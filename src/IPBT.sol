@@ -49,7 +49,7 @@ interface IPBT {
     /// @notice Calls transferTokenWithChip as defined above, with useSafeTransferFrom set to false.
     function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) external;
 
-    /// @notice Emitted when a token is minted
+    /// @notice Emitted when a token is minted.
     event PBTMint(uint256 indexed tokenId, address indexed chipAddress);
 
     /// @notice Emitted when a token is mapped to a different chip.
