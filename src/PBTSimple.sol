@@ -53,9 +53,11 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         do {
             address chipAddress = chipAddresses[i];
             uint256 tokenId = tokenIds[i];
+
             if (throwIfTokenAlreadyMinted && _exists(tokenId)) {
                 revert SeedingChipDataForExistingToken();
             }
+            
             _tokenDatas[chipAddress] = TokenData(tokenId, chipAddress, true);
             ++i;
         } while(i < tokenIdsLength);
@@ -73,15 +75,19 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         do {
             address oldChipAddress = chipAddressesOld[i];
             TokenData memory oldTokenData = _tokenDatas[oldChipAddress];
-            if (!oldTokenData.set) {
+
+            if (!oldTokenData.set) { 
                 revert UpdatingChipForUnsetChipMapping();
             }
+
             address newChipAddress = chipAddressesNew[i];
             uint256 tokenId = oldTokenData.tokenId;
             _tokenDatas[newChipAddress] = TokenData(tokenId, newChipAddress, true);
+
             if (_exists(tokenId)) {
                 emit PBTChipRemapping(tokenId, oldChipAddress, newChipAddress);
             }
+            
             delete _tokenDatas[oldChipAddress];
             ++i;
         } while(i < chipAddressesOld.length);
