@@ -59,7 +59,10 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
             }
             
             _tokenDatas[chipAddress] = TokenData(tokenId, chipAddress, true);
-            ++i;
+            
+            unchecked {
+                ++i;
+            }
         } while(i < tokenIdsLength);
     }
 
@@ -89,7 +92,10 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
             }
             
             delete _tokenDatas[oldChipAddress];
-            ++i;
+            
+            unchecked {
+                ++i;
+            }
         } while(i < chipAddressesOld.length);
     }
 
