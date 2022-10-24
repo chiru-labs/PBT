@@ -49,14 +49,21 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         if (tokenIdsLength != chipAddresses.length) {
             revert ArrayLengthMismatch();
         }
-        for (uint256 i = 0; i < tokenIdsLength; ++i) {
+        uint256 i = 0;
+        do {
             address chipAddress = chipAddresses[i];
             uint256 tokenId = tokenIds[i];
+
             if (throwIfTokenAlreadyMinted && _exists(tokenId)) {
                 revert SeedingChipDataForExistingToken();
             }
+            
             _tokenDatas[chipAddress] = TokenData(tokenId, chipAddress, true);
-        }
+            
+            unchecked {
+                ++i;
+            }
+        } while(i < tokenIdsLength);
     }
 
     // Should only be called for tokenIds that have been minted
@@ -67,20 +74,29 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         if (chipAddressesOld.length != chipAddressesNew.length) {
             revert ArrayLengthMismatch();
         }
-        for (uint256 i = 0; i < chipAddressesOld.length; ++i) {
+        uint256 i = 0;
+        do {
             address oldChipAddress = chipAddressesOld[i];
             TokenData memory oldTokenData = _tokenDatas[oldChipAddress];
-            if (!oldTokenData.set) {
+
+            if (!oldTokenData.set) { 
                 revert UpdatingChipForUnsetChipMapping();
             }
+
             address newChipAddress = chipAddressesNew[i];
             uint256 tokenId = oldTokenData.tokenId;
             _tokenDatas[newChipAddress] = TokenData(tokenId, newChipAddress, true);
+
             if (_exists(tokenId)) {
                 emit PBTChipRemapping(tokenId, oldChipAddress, newChipAddress);
             }
+            
             delete _tokenDatas[oldChipAddress];
-        }
+            
+            unchecked {
+                ++i;
+            }
+        } while(i < chipAddressesOld.length);
     }
 
     function tokenIdFor(address chipAddress) external view override returns (uint256) {
