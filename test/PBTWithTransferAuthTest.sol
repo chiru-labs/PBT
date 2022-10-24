@@ -8,7 +8,7 @@ contract PBTWithTransferAuthTest is Test {
     event PBTMint(uint256 indexed tokenId, address indexed chipAddress);
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
-    PBTSimpleMock public pbt;
+    PBTWithTransferAuthMock public pbt;
     uint256 public tokenId1 = 1;
     uint256 public tokenId2 = 2;
     uint256 public tokenId3 = 3;
@@ -22,7 +22,7 @@ contract PBTWithTransferAuthTest is Test {
     uint256 public blockNumber = 10;
 
     function setUp() public {
-        pbt = new PBTSimpleMock("PBTSimple", "PBTS");
+        pbt = new PBTWithTransferAuthMock("PBTWithTransferAuth", "PBTWTA");
     }
 
     modifier mintedTokens() {
@@ -70,12 +70,12 @@ contract PBTWithTransferAuthTest is Test {
 
         pbt.seedChipToTokenMapping(chipAddresses, tokenIds, true);
 
-        PBTSimple.TokenData memory td1 = pbt.getTokenData(chipAddr1);
+        PBTWithTransferAuth.TokenData memory td1 = pbt.getTokenData(chipAddr1);
         assertEq(td1.tokenId, tokenId1);
         assertEq(td1.chipAddress, chipAddr1);
         assertEq(td1.set, true);
 
-        PBTSimple.TokenData memory td2 = pbt.getTokenData(chipAddr2);
+        PBTWithTransferAuth.TokenData memory td2 = pbt.getTokenData(chipAddr2);
         assertEq(td2.tokenId, tokenId2);
         assertEq(td2.chipAddress, chipAddr2);
         assertEq(td2.set, true);
@@ -151,21 +151,21 @@ contract PBTWithTransferAuthTest is Test {
         pbt.updateChips(chipAddressesOld, chipAddressesNew);
 
         // Validate that the old tokenDatas have been cleared
-        PBTSimple.TokenData memory td1 = pbt.getTokenData(chipAddr1);
+        PBTWithTransferAuth.TokenData memory td1 = pbt.getTokenData(chipAddr1);
         assertEq(td1.tokenId, 0);
         assertEq(td1.chipAddress, address(0));
         assertEq(td1.set, false);
-        PBTSimple.TokenData memory td2 = pbt.getTokenData(chipAddr2);
+        PBTWithTransferAuth.TokenData memory td2 = pbt.getTokenData(chipAddr2);
         assertEq(td2.tokenId, 0);
         assertEq(td2.chipAddress, address(0));
         assertEq(td2.set, false);
 
         // Validate the new tokenDatas have been set
-        PBTSimple.TokenData memory td3 = pbt.getTokenData(chipAddr3);
+        PBTWithTransferAuth.TokenData memory td3 = pbt.getTokenData(chipAddr3);
         assertEq(td3.tokenId, tokenId1);
         assertEq(td3.chipAddress, chipAddr3);
         assertEq(td3.set, true);
-        PBTSimple.TokenData memory td4 = pbt.getTokenData(chipAddr4);
+        PBTWithTransferAuth.TokenData memory td4 = pbt.getTokenData(chipAddr4);
         assertEq(td4.tokenId, tokenId2);
         assertEq(td4.chipAddress, chipAddr4);
         assertEq(td4.set, true);
@@ -215,7 +215,7 @@ contract PBTWithTransferAuthTest is Test {
     }
 
     function testIsChipSignatureForToken() public setChipTokenMapping mintedTokens {
-        bytes32 payload = "ThisIsPBTSimple";
+        bytes32 payload = "ThisIsPBTWithTransferAuth";
 
         // Create signature from payload
         bytes32 payloadHash = keccak256(abi.encodePacked(payload));
@@ -294,7 +294,7 @@ contract PBTWithTransferAuthTest is Test {
 
         vm.roll(blockNumber + 100);
         vm.prank(user1);
-        PBTSimple.TokenData memory td = pbt.getTokenDataForChipSignature(chipSignature, blockNumber);
+        PBTWithTransferAuth.TokenData memory td = pbt.getTokenDataForChipSignature(chipSignature, blockNumber);
 
         assertEq(td.tokenId, tokenId1);
         assertEq(td.chipAddress, chipAddr1);
