@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "../src/mocks/PBTWithTransferAuthMock.sol";
 
-contract PBTWithTransferAuth is Test {
+contract PBTWithTransferAuthTest is Test {
     event PBTMint(uint256 indexed tokenId, address indexed chipAddress);
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 

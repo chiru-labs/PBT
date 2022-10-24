@@ -17,7 +17,7 @@ error BlockNumberTooOld();
 /**
  * Implementation of PBT where all chipAddress->tokenIds are preset in the contract by the contract owner.
  */
-contract PBTSimple is ERC721ReadOnly, IPBT {
+contract PBTWithTransferAuth is ERC721ReadOnly, IPBT {
     using ECDSA for bytes32;
 
     struct TokenData {

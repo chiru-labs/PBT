@@ -3,8 +3,8 @@ pragma solidity ^0.8.13;
 
 import "../PBTWithTransferAuth.sol";
 
-contract PBTSimpleMock is PBTSimple {
-    constructor(string memory name_, string memory symbol_) PBTSimple(name_, symbol_) {}
+contract PBTWithTransferAuthMock is PBTWithTransferAuth {
+    constructor(string memory name_, string memory symbol_) PBTWithTransferAuth(name_, symbol_) {}
 
     function mint(address to, uint256 tokenId) public {
         _mint(to, tokenId);
