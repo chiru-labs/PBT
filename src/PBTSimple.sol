@@ -138,7 +138,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         bytes calldata signatureFromChip,
         uint256 blockNumberUsedInSig,
         bool useSafeTransferFrom
-    ) public override {
+    ) public virtual override {
         _transferTokenWithChip(signatureFromChip, blockNumberUsedInSig, useSafeTransferFrom);
     }
 
