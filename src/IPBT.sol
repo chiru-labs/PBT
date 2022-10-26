@@ -26,7 +26,7 @@ interface IPBT {
     /// @param payload Arbitrary data that is signed by the chip to produce the signature param.
     /// @param signature Chip's signature of the passed-in payload.
     /// @return Whether the signature of the payload was signed by the chip linked to the token id.
-    function isChipSignatureForToken(uint256 tokenId, bytes32 payload, bytes calldata signature)
+    function isChipSignatureForToken(uint256 tokenId, bytes calldata payload, bytes calldata signature)
         external
         view
         returns (bool);
