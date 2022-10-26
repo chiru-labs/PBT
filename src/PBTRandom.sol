@@ -10,6 +10,7 @@ error NoMintedTokenForChip();
 error ArrayLengthMismatch();
 error ChipAlreadyLinkedToMintedToken();
 error UpdatingChipForUnsetChipMapping();
+error InvalidBlockNumber();
 error BlockNumberTooOld();
 
 /**
@@ -23,14 +24,14 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         address chipAddress;
         bool set;
     }
-    /**
-     * Mapping from chipAddress to TokenData
-     */
 
+    // Mapping from chipAddress to TokenData
     mapping(address => TokenData) _tokenDatas;
 
+    // Max token supply
     uint128 public immutable maxSupply;
     uint128 private _numAvailableRemainingTokens;
+
     // Data structure used for Fisher Yates shuffle
     mapping(uint128 => uint128) private _availableRemainingTokens;
 
@@ -44,6 +45,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         if (chipAddressesOld.length != chipAddressesNew.length) {
             revert ArrayLengthMismatch();
         }
+
         for (uint256 i = 0; i < chipAddressesOld.length; i++) {
             address oldChipAddress = chipAddressesOld[i];
             TokenData memory oldTokenData = _tokenDatas[oldChipAddress];
@@ -90,6 +92,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     // Contract should check that (1) recentBlockhash is a recent blockhash, (2) receivingAddress === to, and (3) the signing chip is allowlisted.
     function _mintTokenWithChip(bytes memory signatureFromChip, uint256 blockNumberUsedInSig) internal {
         address chipAddr = _getChipAddrForChipSignature(signatureFromChip, blockNumberUsedInSig);
+
         TokenData memory tokenData = _tokenDatas[chipAddr];
         if (tokenData.set) {
             revert ChipAlreadyLinkedToMintedToken();
@@ -97,8 +100,9 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
 
         uint128 tokenId = useRandomAvailableTokenId();
         _mint(_msgSender(), tokenId);
-        emit PBTMint(tokenId, chipAddr);
         _tokenDatas[chipAddr] = TokenData(tokenId, chipAddr, true);
+
+        emit PBTMint(tokenId, chipAddr);
     }
 
     // Generates a pseudorandom number between [0,maxSupply) that has not yet been generated before, in O(1) time.
@@ -207,6 +211,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
 
     function _getTokenDataForChipSignature(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
         internal
+        view
         returns (TokenData memory)
     {
         address chipAddr = _getChipAddrForChipSignature(signatureFromChip, blockNumberUsedInSig);
@@ -219,8 +224,15 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
 
     function _getChipAddrForChipSignature(bytes memory signatureFromChip, uint256 blockNumberUsedInSig)
         internal
+        view
         returns (address)
     {
+        // The blockNumberUsedInSig must be in a previous block because the blockhash of the current
+        // block does not exist yet.
+        if (block.number <= blockNumberUsedInSig) {
+            revert InvalidBlockNumber();
+        }
+
         if (block.number - blockNumberUsedInSig > getMaxBlockhashValidWindow()) {
             revert BlockNumberTooOld();
         }
