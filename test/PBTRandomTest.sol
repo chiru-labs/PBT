@@ -32,6 +32,10 @@ contract PBTRandomTest is Test {
         signature = abi.encodePacked(r, s, v);
     }
 
+    function _createSignature(bytes32 payload, uint256 chipAddrNum) private returns (bytes memory signature) {
+        return _createSignature(abi.encodePacked(payload), chipAddrNum);
+    }
+
     function testMintTokenWithChip() public {
         // Change block number to the next block to set blockHash(blockNumber)
         vm.roll(blockNumber + 1);
@@ -50,5 +54,26 @@ contract PBTRandomTest is Test {
         // Make sure a chipAddr that has been minted can't mint again
         vm.expectRevert(ChipAlreadyLinkedToMintedToken.selector);
         pbt.mintTokenWithChip(signature, blockNumber);
+    }
+
+    function testIsChipSignatureForToken() public {
+        vm.roll(blockNumber + 1);
+
+        bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
+        bytes memory signature = _createSignature(payload, 101);
+
+        vm.startPrank(user1);
+        vm.roll(blockNumber + 2);
+        uint256 tokenId = pbt.mintTokenWithChip(signature, blockNumber);
+
+        bytes32 payloadDecoded;
+        assembly {
+            payloadDecoded := mload(add(payload, 32))
+        }
+
+        console.log(vm.toString(payload));
+        console.log(vm.toString(payloadDecoded));
+
+        assertEq(pbt.isChipSignatureForToken(tokenId, payloadDecoded, signature), true);
     }
 }

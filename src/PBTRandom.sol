@@ -90,7 +90,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     //    signatureFromChip: signature(receivingAddress + recentBlockhash), signed by an approved chip
     //
     // Contract should check that (1) recentBlockhash is a recent blockhash, (2) receivingAddress === to, and (3) the signing chip is allowlisted.
-    function _mintTokenWithChip(bytes memory signatureFromChip, uint256 blockNumberUsedInSig) internal {
+    function _mintTokenWithChip(bytes memory signatureFromChip, uint256 blockNumberUsedInSig) internal returns (uint256) {
         address chipAddr = _getChipAddrForChipSignature(signatureFromChip, blockNumberUsedInSig);
 
         TokenData memory tokenData = _tokenDatas[chipAddr];
@@ -103,6 +103,8 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         _tokenDatas[chipAddr] = TokenData(tokenId, chipAddr, true);
 
         emit PBTMint(tokenId, chipAddr);
+
+        return tokenId;
     }
 
     // Generates a pseudorandom number between [0,maxSupply) that has not yet been generated before, in O(1) time.
