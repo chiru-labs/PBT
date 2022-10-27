@@ -22,7 +22,6 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
 
     struct TokenData {
         uint256 tokenId;
-        address chipAddress;
         bool set;
     }
 
@@ -55,7 +54,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
             if (throwIfTokenAlreadyMinted && _exists(tokenId)) {
                 revert SeedingChipDataForExistingToken();
             }
-            _tokenDatas[chipAddress] = TokenData(tokenId, chipAddress, true);
+            _tokenDatas[chipAddress] = TokenData(tokenId, true);
         }
     }
 
@@ -75,7 +74,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
             }
             address newChipAddress = chipAddressesNew[i];
             uint256 tokenId = oldTokenData.tokenId;
-            _tokenDatas[newChipAddress] = TokenData(tokenId, newChipAddress, true);
+            _tokenDatas[newChipAddress] = TokenData(tokenId, true);
             if (_exists(tokenId)) {
                 emit PBTChipRemapping(tokenId, oldChipAddress, newChipAddress);
             }
@@ -123,10 +122,10 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         internal
         returns (uint256)
     {
-        TokenData memory tokenData = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
+        (TokenData memory tokenData, address chipAddress) = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
         uint256 tokenId = tokenData.tokenId;
         _mint(_msgSender(), tokenId);
-        emit PBTMint(tokenId, tokenData.chipAddress);
+        emit PBTMint(tokenId, chipAddress);
         return tokenId;
     }
 
@@ -147,18 +146,18 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         uint256 blockNumberUsedInSig,
         bool useSafeTransferFrom
     ) internal virtual {
-        uint256 tokenId = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig).tokenId;
+        (TokenData memory tokenData,) = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
         if (useSafeTransferFrom) {
-            _safeTransfer(ownerOf(tokenId), _msgSender(), tokenId, "");
+            _safeTransfer(ownerOf(tokenData.tokenId), _msgSender(), tokenData.tokenId, "");
         } else {
-            _transfer(ownerOf(tokenId), _msgSender(), tokenId);
+            _transfer(ownerOf(tokenData.tokenId), _msgSender(), tokenData.tokenId);
         }
     }
 
     function _getTokenDataForChipSignature(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
         internal
         view
-        returns (TokenData memory)
+        returns (TokenData memory, address)
     {
         // The blockNumberUsedInSig must be in a previous block because the blockhash of the current
         // block does not exist yet.
@@ -178,7 +177,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
 
         TokenData memory tokenData = _tokenDatas[chipAddr];
         if (tokenData.set) {
-            return tokenData;
+            return (tokenData, chipAddr);
         }
         revert InvalidSignature();
     }

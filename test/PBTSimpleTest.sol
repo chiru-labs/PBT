@@ -72,12 +72,10 @@ contract PBTSimpleTest is Test {
 
         PBTSimple.TokenData memory td1 = pbt.getTokenData(chipAddr1);
         assertEq(td1.tokenId, tokenId1);
-        assertEq(td1.chipAddress, chipAddr1);
         assertEq(td1.set, true);
 
         PBTSimple.TokenData memory td2 = pbt.getTokenData(chipAddr2);
         assertEq(td2.tokenId, tokenId2);
-        assertEq(td2.chipAddress, chipAddr2);
         assertEq(td2.set, true);
     }
 
@@ -135,21 +133,17 @@ contract PBTSimpleTest is Test {
         // Validate that the old tokenDatas have been cleared
         PBTSimple.TokenData memory td1 = pbt.getTokenData(chipAddr1);
         assertEq(td1.tokenId, 0);
-        assertEq(td1.chipAddress, address(0));
         assertEq(td1.set, false);
         PBTSimple.TokenData memory td2 = pbt.getTokenData(chipAddr2);
         assertEq(td2.tokenId, 0);
-        assertEq(td2.chipAddress, address(0));
         assertEq(td2.set, false);
 
         // Validate the new tokenDatas have been set
         PBTSimple.TokenData memory td3 = pbt.getTokenData(chipAddr3);
         assertEq(td3.tokenId, tokenId1);
-        assertEq(td3.chipAddress, chipAddr3);
         assertEq(td3.set, true);
         PBTSimple.TokenData memory td4 = pbt.getTokenData(chipAddr4);
         assertEq(td4.tokenId, tokenId2);
-        assertEq(td4.chipAddress, chipAddr4);
         assertEq(td4.set, true);
     }
 
@@ -272,10 +266,9 @@ contract PBTSimpleTest is Test {
 
         vm.roll(blockNumber + 100);
         vm.prank(user1);
-        PBTSimple.TokenData memory td = pbt.getTokenDataForChipSignature(chipSignature, blockNumber);
+        (PBTSimple.TokenData memory td, ) = pbt.getTokenDataForChipSignature(chipSignature, blockNumber);
 
         assertEq(td.tokenId, tokenId1);
-        assertEq(td.chipAddress, chipAddr1);
         assertEq(td.set, true);
     }
 
