@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
+import "../src/IPBT.sol";
 import "../src/mocks/PBTRandomMock.sol";
 
 contract PBTRandomTest is Test {
@@ -66,14 +67,6 @@ contract PBTRandomTest is Test {
         vm.roll(blockNumber + 2);
         uint256 tokenId = pbt.mintTokenWithChip(signature, blockNumber);
 
-        bytes32 payloadDecoded;
-        assembly {
-            payloadDecoded := mload(add(payload, 32))
-        }
-
-        console.log(vm.toString(payload));
-        console.log(vm.toString(payloadDecoded));
-
-        assertEq(pbt.isChipSignatureForToken(tokenId, payloadDecoded, signature), true);
+        assertEq(pbt.isChipSignatureForToken(tokenId, payload, signature), true);
     }
 }

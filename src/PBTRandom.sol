@@ -69,7 +69,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     }
 
     // Returns true if the signer of the signature of the payload is the chip for the token id
-    function isChipSignatureForToken(uint256 tokenId, bytes32 payload, bytes memory signature)
+    function isChipSignatureForToken(uint256 tokenId, bytes memory payload, bytes memory signature)
         public
         view
         override
@@ -78,7 +78,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         if (!_exists(tokenId)) {
             revert NoMintedTokenForChip();
         }
-        bytes32 signedHash = keccak256(abi.encodePacked(payload)).toEthSignedMessageHash();
+        bytes32 signedHash = keccak256(payload).toEthSignedMessageHash();
         address chipAddr = signedHash.recover(signature);
         TokenData memory tokenData = _tokenDatas[chipAddr];
         return tokenData.set && tokenData.tokenId == tokenId;
