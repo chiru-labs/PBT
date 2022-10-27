@@ -1,6 +1,6 @@
 {
     "name": "@chiru-labs/pbt",
-    "version": "0.1.2",
+    "version": "0.2.0",
     "description": "Physically Backed Token Contracts in Solidity",
     "main": "index.js",
     "files": [
