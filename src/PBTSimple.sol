@@ -49,14 +49,23 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         if (tokenIdsLength != chipAddresses.length) {
             revert ArrayLengthMismatch();
         }
-        for (uint256 i = 0; i < tokenIdsLength; ++i) {
+
+        if (tokenIdsLength == 0) {
+            return;
+        }
+
+        uint256 i = 0;
+        do {
             address chipAddress = chipAddresses[i];
             uint256 tokenId = tokenIds[i];
             if (throwIfTokenAlreadyMinted && _exists(tokenId)) {
                 revert SeedingChipDataForExistingToken();
             }
             _tokenDatas[chipAddress] = TokenData(tokenId, chipAddress, true);
-        }
+            unchecked {
+                i++;
+            }
+        } while (i < tokenIdsLength);
     }
 
     // Should only be called for tokenIds that have been minted
@@ -64,10 +73,17 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     // Should only be used and called with care and rails to avoid a centralized entity swapping out valid chips.
     // TODO: consider preventing multiple chip addresses mapping to the same tokenId (store a tokenId->chip mapping)
     function _updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew) internal {
-        if (chipAddressesOld.length != chipAddressesNew.length) {
+        uint256 chipAddressesOldLength = chipAddressesOld.length;
+        if (chipAddressesOldLength != chipAddressesNew.length) {
             revert ArrayLengthMismatch();
         }
-        for (uint256 i = 0; i < chipAddressesOld.length; ++i) {
+
+        if (chipAddressesOldLength == 0) {
+            return;
+        }
+
+        uint256 i = 0;
+        do {
             address oldChipAddress = chipAddressesOld[i];
             TokenData memory oldTokenData = _tokenDatas[oldChipAddress];
             if (!oldTokenData.set) {
@@ -80,7 +96,10 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
                 emit PBTChipRemapping(tokenId, oldChipAddress, newChipAddress);
             }
             delete _tokenDatas[oldChipAddress];
-        }
+            unchecked {
+                i++;
+            }
+        } while (i < chipAddressesOldLength);
     }
 
     function tokenIdFor(address chipAddress) external view override returns (uint256) {
