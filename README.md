@@ -14,7 +14,7 @@ From the [Azuki](https://twitter.com/AzukiOfficial) team.
 ## Resources
 
 -   [pbt.io](https://www.pbt.io/)
--   [EIP (Draft)](https://github.com/ethereum/EIPs/pull/5791)
+-   [Draft EIP](https://eips.ethereum.org/EIPS/eip-5791)
 -   [Blog](https://www.azuki.com/updates/pbt)
 
 ## How does it work?

@@ -197,10 +197,9 @@ contract PBTSimpleTest is Test {
     }
 
     function testIsChipSignatureForToken() public setChipTokenMapping mintedTokens {
-        bytes32 payload = "ThisIsPBTSimple";
-
         // Create signature from payload
-        bytes32 payloadHash = keccak256(abi.encodePacked(payload));
+        bytes memory payload = abi.encodePacked("ThisIsPBTSimple");
+        bytes32 payloadHash = keccak256(payload);
         bytes32 signedHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(101, signedHash);
         bytes memory chipSignature = abi.encodePacked(r, s, v);
