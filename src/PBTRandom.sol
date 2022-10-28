@@ -6,6 +6,7 @@ import "./ERC721Readonly.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 error InvalidSignature();
+error InvalidChipAddress();
 error NoMintedTokenForChip();
 error ArrayLengthMismatch();
 error ChipAlreadyLinkedToMintedToken();
@@ -38,6 +39,13 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     constructor(string memory name_, string memory symbol_, uint128 maxSupply_) ERC721ReadOnly(name_, symbol_) {
         maxSupply = maxSupply_;
         _numAvailableRemainingTokens = maxSupply_;
+    }
+
+    function _seedChipAddresses(address[] memory chipAddresses) internal {
+        for (uint256 i = 0; i < chipAddresses.length; ++i) {
+            address chipAddress = chipAddresses[i];
+            _tokenDatas[chipAddress] = TokenData(0, chipAddress, false);
+        }
     }
 
     // TODO: consider preventing multiple chip addresses mapping to the same tokenId (store a tokenId->chip mapping)
@@ -90,12 +98,17 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     //    signatureFromChip: signature(receivingAddress + recentBlockhash), signed by an approved chip
     //
     // Contract should check that (1) recentBlockhash is a recent blockhash, (2) receivingAddress === to, and (3) the signing chip is allowlisted.
-    function _mintTokenWithChip(bytes memory signatureFromChip, uint256 blockNumberUsedInSig) internal returns (uint256) {
+    function _mintTokenWithChip(bytes memory signatureFromChip, uint256 blockNumberUsedInSig)
+        internal
+        returns (uint256)
+    {
         address chipAddr = _getChipAddrForChipSignature(signatureFromChip, blockNumberUsedInSig);
 
         TokenData memory tokenData = _tokenDatas[chipAddr];
         if (tokenData.set) {
             revert ChipAlreadyLinkedToMintedToken();
+        } else if (tokenData.chipAddress != chipAddr) {
+            revert InvalidChipAddress();
         }
 
         uint128 tokenId = useRandomAvailableTokenId();

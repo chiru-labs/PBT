@@ -18,7 +18,14 @@ contract PBTRandomMock is PBTRandom {
         _updateChips(chipAddressesOld, chipAddressesNew);
     }
 
-    function mintTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) public returns(uint256) {
+    function seedChipAddresses(address[] calldata chipAddresses) public {
+        _seedChipAddresses(chipAddresses);
+    }
+
+    function mintTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
+        public
+        returns (uint256)
+    {
         return _mintTokenWithChip(signatureFromChip, blockNumberUsedInSig);
     }
 

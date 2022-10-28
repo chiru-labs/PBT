@@ -48,6 +48,14 @@ contract PBTRandomTest is Test {
         vm.roll(blockNumber + 2);
         uint256 expectedTokenId = 328;
 
+        // First mint will fail because seeding hasn't happened
+        vm.expectRevert(InvalidChipAddress.selector);
+        pbt.mintTokenWithChip(signature, blockNumber);
+
+        address[] memory chipAddresses = new address[](1);
+        chipAddresses[0] = chipAddr1;
+        pbt.seedChipAddresses(chipAddresses);
+
         vm.expectEmit(true, true, true, true);
         emit PBTMint(expectedTokenId, chipAddr1);
         pbt.mintTokenWithChip(signature, blockNumber);
@@ -58,6 +66,10 @@ contract PBTRandomTest is Test {
     }
 
     function testIsChipSignatureForToken() public {
+        address[] memory chipAddresses = new address[](1);
+        chipAddresses[0] = chipAddr1;
+        pbt.seedChipAddresses(chipAddresses);
+
         vm.roll(blockNumber + 1);
 
         bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
