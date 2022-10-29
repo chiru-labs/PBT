@@ -7,6 +7,7 @@ import "../src/mocks/PBTRandomMock.sol";
 
 contract PBTRandomTest is Test {
     event PBTMint(uint256 indexed tokenId, address indexed chipAddress);
+    event PBTChipRemapping(uint256 indexed tokenId, address indexed oldChipAddress, address indexed newChipAddress);
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
     PBTRandomMock public pbt;
@@ -52,10 +53,12 @@ contract PBTRandomTest is Test {
         vm.expectRevert(InvalidChipAddress.selector);
         pbt.mintTokenWithChip(signature, blockNumber);
 
+        // Seed chip addresses
         address[] memory chipAddresses = new address[](1);
         chipAddresses[0] = chipAddr1;
         pbt.seedChipAddresses(chipAddresses);
 
+        // Mint should now succeed
         vm.expectEmit(true, true, true, true);
         emit PBTMint(expectedTokenId, chipAddr1);
         pbt.mintTokenWithChip(signature, blockNumber);
@@ -65,11 +68,16 @@ contract PBTRandomTest is Test {
         pbt.mintTokenWithChip(signature, blockNumber);
     }
 
-    function testIsChipSignatureForToken() public {
-        address[] memory chipAddresses = new address[](1);
+    modifier withSeededChips() {
+        address[] memory chipAddresses = new address[](3);
         chipAddresses[0] = chipAddr1;
+        chipAddresses[1] = chipAddr2;
+        chipAddresses[2] = chipAddr3;
         pbt.seedChipAddresses(chipAddresses);
+        _;
+    }
 
+    function testIsChipSignatureForToken() public withSeededChips {
         vm.roll(blockNumber + 1);
 
         bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
@@ -78,7 +86,66 @@ contract PBTRandomTest is Test {
         vm.startPrank(user1);
         vm.roll(blockNumber + 2);
         uint256 tokenId = pbt.mintTokenWithChip(signature, blockNumber);
-
         assertEq(pbt.isChipSignatureForToken(tokenId, payload, signature), true);
+
+        vm.expectRevert(NoMintedTokenForChip.selector);
+        pbt.isChipSignatureForToken(tokenId + 1, payload, signature);
+    }
+
+    function testUpdateChips() public {
+        // Change block number to the next block to set blockHash(blockNumber)
+        vm.roll(blockNumber + 1);
+
+        address[] memory oldChips = new address[](2);
+        oldChips[0] = chipAddr1;
+        oldChips[1] = chipAddr2;
+        pbt.seedChipAddresses(oldChips);
+
+        address[] memory newChips = new address[](2);
+        newChips[0] = chipAddr3;
+        newChips[1] = chipAddr4;
+
+        // Chips haven't minted so they can't be updated
+        vm.expectRevert(UpdatingChipForUnsetChipMapping.selector);
+        pbt.updateChips(oldChips, newChips);
+
+        // Mint the two chip addresses
+        bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
+        bytes memory signature = _createSignature(payload, 101);
+        vm.prank(user1);
+        uint256 tokenId1 = pbt.mintTokenWithChip(signature, blockNumber);
+
+        payload = abi.encodePacked(user2, blockhash(blockNumber));
+        signature = _createSignature(payload, 102);
+        vm.prank(user2);
+        uint256 tokenId2 = pbt.mintTokenWithChip(signature, blockNumber);
+
+        // updateChips should now succeed
+        vm.expectEmit(true, true, true, true);
+        emit PBTChipRemapping(tokenId1, chipAddr1, chipAddr3);
+        vm.expectEmit(true, true, true, true);
+        emit PBTChipRemapping(tokenId2, chipAddr2, chipAddr4);
+        pbt.updateChips(oldChips, newChips);
+
+        // Verify the call works as inteded
+        PBTRandom.TokenData memory td = pbt.getTokenData(chipAddr1);
+        assertEq(td.set, false);
+        assertEq(td.tokenId, 0);
+        assertEq(td.chipAddress, address(0));
+
+        td = pbt.getTokenData(chipAddr2);
+        assertEq(td.set, false);
+        assertEq(td.tokenId, 0);
+        assertEq(td.chipAddress, address(0));
+
+        td = pbt.getTokenData(chipAddr3);
+        assertEq(td.set, true);
+        assertEq(td.tokenId, tokenId1);
+        assertEq(td.chipAddress, chipAddr3);
+
+        td = pbt.getTokenData(chipAddr4);
+        assertEq(td.set, true);
+        assertEq(td.tokenId, tokenId2);
+        assertEq(td.chipAddress, chipAddr4);
     }
 }
