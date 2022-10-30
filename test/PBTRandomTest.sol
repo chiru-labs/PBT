@@ -148,4 +148,72 @@ contract PBTRandomTest is Test {
         assertEq(td.tokenId, tokenId2);
         assertEq(td.chipAddress, chipAddr4);
     }
+
+    function testTokenIdFor() public {
+        vm.expectRevert(NoMintedTokenForChip.selector);
+        pbt.tokenIdFor(chipAddr1);
+
+        vm.roll(blockNumber + 1);
+
+        bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
+        bytes memory signature = _createSignature(payload, 101);
+        vm.startPrank(user1);
+
+        address[] memory chipAddresses = new address[](1);
+        chipAddresses[0] = chipAddr1;
+        pbt.seedChipAddresses(chipAddresses);
+
+        uint256 tokenId = pbt.mintTokenWithChip(signature, blockNumber);
+        assertEq(pbt.tokenIdFor(chipAddr1), tokenId);
+    }
+
+    function testTransferTokenWithChip(bool useSafeTransfer) public withSeededChips {
+        vm.roll(blockNumber + 1);
+        bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
+        bytes memory signature = _createSignature(payload, 101);
+        vm.prank(user1);
+        uint256 tokenId = pbt.mintTokenWithChip(signature, blockNumber);
+        assertEq(pbt.ownerOf(tokenId), user1);
+        
+        vm.roll(blockNumber + 10);
+        payload = abi.encodePacked(user2, blockhash(blockNumber + 9));
+        signature = _createSignature(payload, 101);
+        vm.prank(user2);
+        pbt.transferTokenWithChip(signature, blockNumber + 9, useSafeTransfer);
+        assertEq(pbt.ownerOf(tokenId), user2);
+    }
+
+    function testGetTokenDataForChipSignatureInvalid() public withSeededChips {
+        vm.startPrank(user1);
+        vm.roll(blockNumber + 1);
+        bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
+        bytes memory signature = _createSignature(payload, 101);
+
+        vm.expectRevert(InvalidSignature.selector);
+        pbt.getTokenDataForChipSignature(signature, blockNumber);
+
+        uint256 tokenId = pbt.mintTokenWithChip(signature, blockNumber);
+
+        // Current block number is the same as the signature block number which is invalid
+        vm.expectRevert(InvalidBlockNumber.selector);
+        pbt.getTokenDataForChipSignature(signature, blockNumber + 1);
+
+        // Block number used in signature is too old
+        vm.roll(blockNumber + 101);
+        vm.expectRevert(BlockNumberTooOld.selector);
+        pbt.getTokenDataForChipSignature(signature, blockNumber);
+    }
+
+    function testGetTokenDataForChipSignature() public withSeededChips {
+        vm.startPrank(user1);
+        vm.roll(blockNumber + 1);
+        bytes memory payload = abi.encodePacked(user1, blockhash(blockNumber));
+        bytes memory signature = _createSignature(payload, 101);
+        uint256 tokenId = pbt.mintTokenWithChip(signature, blockNumber);
+
+        PBTRandom.TokenData memory td = pbt.getTokenDataForChipSignature(signature, blockNumber);
+        assertEq(td.set, true);
+        assertEq(td.chipAddress, chipAddr1);
+        assertEq(td.tokenId, tokenId);
+    }
 }

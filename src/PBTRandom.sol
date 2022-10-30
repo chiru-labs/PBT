@@ -140,8 +140,6 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     //    - update the _availableRemainingTokens mapping state
     //        - set _availableRemainingTokens[randIndex] to either the index or the value of the last entry in the mapping (depends on the last entry's state)
     //        - decrement _numAvailableRemainingTokens to mimic the shrinking of an array
-    //
-    // Code first used in CryptoPhunks mint.
     function useRandomAvailableTokenId() internal returns (uint128) {
         uint128 numAvailableRemainingTokens = _numAvailableRemainingTokens;
 
@@ -254,7 +252,6 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
 
         bytes32 blockHash = blockhash(blockNumberUsedInSig);
         bytes32 signedHash = keccak256(abi.encodePacked(_msgSender(), blockHash)).toEthSignedMessageHash();
-
         return signedHash.recover(signatureFromChip);
     }
 
