@@ -12,7 +12,6 @@ error ArrayLengthMismatch();
 error ChipAlreadyLinkedToMintedToken();
 error UpdatingChipForUnsetChipMapping();
 error InvalidRandomIndex();
-error NoMoreRemainingTokens();
 error InvalidBlockNumber();
 error BlockNumberTooOld();
 
@@ -161,10 +160,10 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
             )
         );
         uint128 randomIndex = uint128(randomNum % numAvailableRemainingTokens);
-        return _setAvailableTokenAtIndex(randomIndex);
+        return _getAvailableTokenAtIndex(randomIndex);
     }
 
-    function _setAvailableTokenAtIndex(uint128 indexToUse) internal returns (uint128) {
+    function _getAvailableTokenAtIndex(uint128 indexToUse) internal returns (uint128) {
         uint128 numAvailableRemainingTokens = _numAvailableRemainingTokens;
         if (indexToUse >= numAvailableRemainingTokens) {
             revert InvalidRandomIndex();

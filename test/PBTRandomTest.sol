@@ -217,64 +217,64 @@ contract PBTRandomTest is Test {
         assertEq(td.tokenId, tokenId);
     }
 
-    function testSetAvailableTokenAtIndex() public {
+    function testGetAvailableTokenAtIndex() public {
         // lastIndex: 9
         // _availableRemainingTokens: [0, 9, 0, 0, 0, 0, 0, 0, 0, 0]
-        assertEq(pbt.setAvailableTokenAtIndex(1), 1);
+        assertEq(pbt.getAvailableTokenAtIndex(1), 1);
         assertEq(pbt.getAvailableRemainingTokens(1), 9);
 
         // An error should be raised on a call to index 9
         vm.expectRevert(InvalidRandomIndex.selector);
-        pbt.setAvailableTokenAtIndex(9);
+        pbt.getAvailableTokenAtIndex(9);
 
         // lastIndex: 8
         // _availableRemainingTokens: [0, 9, 0, 0, 0, 0, 0, 0, 0, 0]
-        assertEq(pbt.setAvailableTokenAtIndex(1), 9);
+        assertEq(pbt.getAvailableTokenAtIndex(1), 9);
         assertEq(pbt.getAvailableRemainingTokens(9), 0);
 
         // lastIndex: 7
         // _availableRemainingTokens: [0, 9, 0, 0, 7, 0, 0, 0, 0, 0]
-        assertEq(pbt.setAvailableTokenAtIndex(4), 4);
+        assertEq(pbt.getAvailableTokenAtIndex(4), 4);
         assertEq(pbt.getAvailableRemainingTokens(4), 7);
 
         // lastIndex: 6
         // _availableRemainingTokens: [0, 9, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.setAvailableTokenAtIndex(4), 7);
+        assertEq(pbt.getAvailableTokenAtIndex(4), 7);
         assertEq(pbt.getAvailableRemainingTokens(4), 6);
 
         // lastIndex: 5
         // _availableRemainingTokens: [0, 5, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.setAvailableTokenAtIndex(1), 8);
+        assertEq(pbt.getAvailableTokenAtIndex(1), 8);
         assertEq(pbt.getAvailableRemainingTokens(1), 5);
 
         // lastIndex: 4
         // _availableRemainingTokens: [0, 5, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.setAvailableTokenAtIndex(4), 6);
+        assertEq(pbt.getAvailableTokenAtIndex(4), 6);
         assertEq(pbt.getAvailableRemainingTokens(4), 6);
 
         // lastIndex: 3
         // _availableRemainingTokens: [0, 5, 3, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.setAvailableTokenAtIndex(2), 2);
+        assertEq(pbt.getAvailableTokenAtIndex(2), 2);
         assertEq(pbt.getAvailableRemainingTokens(2), 3);
 
         // lastIndex: 2
         // _availableRemainingTokens: [0, 3, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.setAvailableTokenAtIndex(1), 5);
+        assertEq(pbt.getAvailableTokenAtIndex(1), 5);
         assertEq(pbt.getAvailableRemainingTokens(1), 3);
 
         // lastIndex: 1
         // _availableRemainingTokens: [3, 0, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.setAvailableTokenAtIndex(0), 0);
+        assertEq(pbt.getAvailableTokenAtIndex(0), 0);
         assertEq(pbt.getAvailableRemainingTokens(0), 3);
 
         // lastIndex: 0
         // _availableRemainingTokens: [3, 0, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.setAvailableTokenAtIndex(0), 3);
+        assertEq(pbt.getAvailableTokenAtIndex(0), 3);
         assertEq(pbt.getAvailableRemainingTokens(0), 3);
 
         // All tokens have been assigned so an error should be raised
         vm.expectRevert(InvalidRandomIndex.selector);
-        pbt.setAvailableTokenAtIndex(0);
+        pbt.getAvailableTokenAtIndex(0);
     }
 
     function testUseRandomAvailableTokenId() public {
