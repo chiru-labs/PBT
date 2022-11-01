@@ -217,75 +217,80 @@ contract PBTRandomTest is Test {
         assertEq(td.tokenId, tokenId);
     }
 
-    function testGetAvailableTokenAtIndex() public {
+    function testUseRandomAvailableTokenId() public {
+        // randomIndex: 7
         // lastIndex: 9
-        // _availableRemainingTokens: [0, 9, 0, 0, 0, 0, 0, 0, 0, 0]
-        assertEq(pbt.getAvailableTokenAtIndex(1), 1);
-        assertEq(pbt.getAvailableRemainingTokens(1), 9);
+        // _availableRemainingTokens: [0, 0, 0, 0, 0, 0, 0, 9, 0, 0]
+        vm.roll(4);
+        assertEq(pbt.useRandomAvailableTokenId(), 7);
+        assertEq(pbt.getAvailableRemainingTokens(7), 9);
 
-        // An error should be raised on a call to index 9
-        vm.expectRevert(InvalidRandomIndex.selector);
-        pbt.getAvailableTokenAtIndex(9);
-
+        // randomIndex: 1
         // lastIndex: 8
-        // _availableRemainingTokens: [0, 9, 0, 0, 0, 0, 0, 0, 0, 0]
-        assertEq(pbt.getAvailableTokenAtIndex(1), 9);
-        assertEq(pbt.getAvailableRemainingTokens(9), 0);
+        // _availableRemainingTokens: [0, 8, 0, 0, 0, 0, 0, 9, 0, 0]
+        vm.roll(5);
+        assertEq(pbt.useRandomAvailableTokenId(), 1);
+        assertEq(pbt.getAvailableRemainingTokens(1), 8);
 
+        // randomIndex: 7
         // lastIndex: 7
-        // _availableRemainingTokens: [0, 9, 0, 0, 7, 0, 0, 0, 0, 0]
-        assertEq(pbt.getAvailableTokenAtIndex(4), 4);
-        assertEq(pbt.getAvailableRemainingTokens(4), 7);
+        // _availableRemainingTokens: [0, 8, 0, 0, 0, 0, 0, 9, 0, 0]
+        vm.roll(6);
+        assertEq(pbt.useRandomAvailableTokenId(), 9);
+        assertEq(pbt.getAvailableRemainingTokens(7), 9);
 
+        // randomIndex: 4
         // lastIndex: 6
-        // _availableRemainingTokens: [0, 9, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.getAvailableTokenAtIndex(4), 7);
+        // _availableRemainingTokens: [0, 8, 0, 0, 6, 0, 0, 9, 0, 0]
+        vm.roll(7);
+        assertEq(pbt.useRandomAvailableTokenId(), 4);
         assertEq(pbt.getAvailableRemainingTokens(4), 6);
 
+        // randomIndex: 1
         // lastIndex: 5
-        // _availableRemainingTokens: [0, 5, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.getAvailableTokenAtIndex(1), 8);
+        // _availableRemainingTokens: [0, 5, 0, 0, 6, 0, 0, 9, 0, 0]
+        vm.roll(8);
+        assertEq(pbt.useRandomAvailableTokenId(), 8);
         assertEq(pbt.getAvailableRemainingTokens(1), 5);
 
+        // randomIndex: 0
         // lastIndex: 4
-        // _availableRemainingTokens: [0, 5, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.getAvailableTokenAtIndex(4), 6);
-        assertEq(pbt.getAvailableRemainingTokens(4), 6);
+        // _availableRemainingTokens: [6, 5, 0, 0, 0, 0, 0, 9, 0, 0]
+        vm.roll(7);
+        assertEq(pbt.useRandomAvailableTokenId(), 0);
+        assertEq(pbt.getAvailableRemainingTokens(0), 6);
 
+        // randomIndex: 1
         // lastIndex: 3
-        // _availableRemainingTokens: [0, 5, 3, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.getAvailableTokenAtIndex(2), 2);
-        assertEq(pbt.getAvailableRemainingTokens(2), 3);
-
-        // lastIndex: 2
-        // _availableRemainingTokens: [0, 3, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.getAvailableTokenAtIndex(1), 5);
+        // _availableRemainingTokens: [6, 3, 0, 0, 0, 0, 0, 9, 0, 0]
+        vm.roll(8);
+        assertEq(pbt.useRandomAvailableTokenId(), 5);
         assertEq(pbt.getAvailableRemainingTokens(1), 3);
 
-        // lastIndex: 1
-        // _availableRemainingTokens: [3, 0, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.getAvailableTokenAtIndex(0), 0);
-        assertEq(pbt.getAvailableRemainingTokens(0), 3);
+        // randomIndex: 1
+        // lastIndex: 2
+        // _availableRemainingTokens: [6, 2, 0, 0, 0, 0, 0, 9, 0, 0]
+        vm.roll(9);
+        assertEq(pbt.useRandomAvailableTokenId(), 3);
+        assertEq(pbt.getAvailableRemainingTokens(1), 2);
 
+        // randomIndex: 0
+        // lastIndex: 1
+        // _availableRemainingTokens: [2, 0, 0, 0, 0, 0, 0, 9, 0, 0]
+        vm.roll(10);
+        assertEq(pbt.useRandomAvailableTokenId(), 6);
+        assertEq(pbt.getAvailableRemainingTokens(0), 2);
+
+        // randomIndex: 0
         // lastIndex: 0
-        // _availableRemainingTokens: [3, 0, 0, 0, 6, 0, 0, 0, 0, 0]
-        assertEq(pbt.getAvailableTokenAtIndex(0), 3);
-        assertEq(pbt.getAvailableRemainingTokens(0), 3);
+        // _availableRemainingTokens: [2, 0, 0, 0, 0, 0, 0, 9, 0, 0]
+        vm.roll(11);
+        assertEq(pbt.useRandomAvailableTokenId(), 2);
+        assertEq(pbt.getAvailableRemainingTokens(0), 2);
 
         // All tokens have been assigned so an error should be raised
-        vm.expectRevert(InvalidRandomIndex.selector);
-        pbt.getAvailableTokenAtIndex(0);
-    }
-
-    function testUseRandomAvailableTokenId() public {
-        // The randomNum that's used is 6
-        assertEq(pbt.useRandomAvailableTokenId(), 6);
-
-        // Increment blockNumber to get a new randomIndex
-        vm.roll(155);
-
-        // New randomIndex is 4
-        assertEq(pbt.useRandomAvailableTokenId(), 4);
+        vm.expectRevert(NoMoreTokenIds.selector);
+        pbt.useRandomAvailableTokenId();
     }
 
     function testSupportsInterface() public {

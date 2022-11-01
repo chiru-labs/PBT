@@ -11,7 +11,7 @@ error NoMintedTokenForChip();
 error ArrayLengthMismatch();
 error ChipAlreadyLinkedToMintedToken();
 error UpdatingChipForUnsetChipMapping();
-error InvalidRandomIndex();
+error NoMoreTokenIds();
 error InvalidBlockNumber();
 error BlockNumberTooOld();
 
@@ -143,6 +143,9 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     //        - decrement _numAvailableRemainingTokens to mimic the shrinking of an array
     function _useRandomAvailableTokenId() internal returns (uint128) {
         uint128 numAvailableRemainingTokens = _numAvailableRemainingTokens;
+        if (numAvailableRemainingTokens == 0) {
+            revert NoMoreTokenIds();
+        }
 
         // Devs can swap this out for something less gameable like chainlink if it makes sense for their use case.
         uint256 randomNum = uint256(
@@ -160,36 +163,28 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
             )
         );
         uint128 randomIndex = uint128(randomNum % numAvailableRemainingTokens);
-        return _getAvailableTokenAtIndex(randomIndex);
-    }
+        uint128 valAtIndex = _availableRemainingTokens[randomIndex];
 
-    function _getAvailableTokenAtIndex(uint128 indexToUse) internal returns (uint128) {
-        uint128 numAvailableRemainingTokens = _numAvailableRemainingTokens;
-        if (indexToUse >= numAvailableRemainingTokens) {
-            revert InvalidRandomIndex();
-        }
-
-        uint128 valAtIndex = _availableRemainingTokens[indexToUse];
         uint128 result;
         if (valAtIndex == 0) {
             // This means the index itself is still an available token
-            result = indexToUse;
+            result = randomIndex;
         } else {
             // This means the index itself is not an available token, but the val at that index is.
             result = valAtIndex;
         }
 
         uint128 lastIndex = numAvailableRemainingTokens - 1;
-        if (indexToUse != lastIndex) {
-            // Replace the value at indexToUse, now that it's been used.
+        if (randomIndex != lastIndex) {
+            // Replace the value at randomIndex, now that it's been used.
             // Replace it with the data from the last index in the array, since we are going to decrease the array size afterwards.
             uint128 lastValInArray = _availableRemainingTokens[lastIndex];
             if (lastValInArray == 0) {
                 // This means the index itself is still an available token
-                _availableRemainingTokens[indexToUse] = lastIndex;
+                _availableRemainingTokens[randomIndex] = lastIndex;
             } else {
                 // This means the index itself is not an available token, but the val at that index is.
-                _availableRemainingTokens[indexToUse] = lastValInArray;
+                _availableRemainingTokens[randomIndex] = lastValInArray;
                 delete _availableRemainingTokens[lastIndex];
             }
         }

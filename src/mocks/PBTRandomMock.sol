@@ -37,10 +37,6 @@ contract PBTRandomMock is PBTRandom {
         return _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
     }
 
-    function getAvailableTokenAtIndex(uint128 indexToUse) public returns (uint256) {
-        return _getAvailableTokenAtIndex(indexToUse);
-    }
-
     function getAvailableRemainingTokens(uint128 index) public view returns (uint128) {
         return _availableRemainingTokens[index];
     }
