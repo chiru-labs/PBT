@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "./IPBT.sol";
-import "./ERC721Readonly.sol";
+import "./ERC721ReadOnly.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 error InvalidSignature();
