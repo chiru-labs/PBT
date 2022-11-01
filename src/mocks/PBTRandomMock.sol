@@ -44,4 +44,8 @@ contract PBTRandomMock is PBTRandom {
     function getAvailableRemainingTokens(uint128 index) public view returns (uint128) {
         return _availableRemainingTokens[index];
     }
+
+    function useRandomAvailableTokenId() public returns (uint128) {
+        return _useRandomAvailableTokenId();
+    }
 }

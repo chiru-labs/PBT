@@ -276,4 +276,20 @@ contract PBTRandomTest is Test {
         vm.expectRevert(InvalidRandomIndex.selector);
         pbt.setAvailableTokenAtIndex(0);
     }
+
+    function testUseRandomAvailableTokenId() public {
+        // The randomNum that's used is 6
+        assertEq(pbt.useRandomAvailableTokenId(), 6);
+
+        // Increment blockNumber to get a new randomIndex
+        vm.roll(155);
+
+        // New randomIndex is 4
+        assertEq(pbt.useRandomAvailableTokenId(), 4);
+    }
+
+    function testSupportsInterface() public {
+        assertEq(pbt.supportsInterface(type(IPBT).interfaceId), true);
+        assertEq(pbt.supportsInterface(type(IERC721).interfaceId), true);
+    }
 }

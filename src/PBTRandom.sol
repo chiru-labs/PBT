@@ -113,7 +113,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
             revert InvalidChipAddress();
         }
 
-        uint128 tokenId = useRandomAvailableTokenId();
+        uint128 tokenId = _useRandomAvailableTokenId();
         _mint(_msgSender(), tokenId);
         _tokenDatas[chipAddr] = TokenData(tokenId, chipAddr, true);
 
@@ -142,7 +142,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     //    - update the _availableRemainingTokens mapping state
     //        - set _availableRemainingTokens[randIndex] to either the index or the value of the last entry in the mapping (depends on the last entry's state)
     //        - decrement _numAvailableRemainingTokens to mimic the shrinking of an array
-    function useRandomAvailableTokenId() internal returns (uint128) {
+    function _useRandomAvailableTokenId() internal returns (uint128) {
         uint128 numAvailableRemainingTokens = _numAvailableRemainingTokens;
 
         // Devs can swap this out for something less gameable like chainlink if it makes sense for their use case.
