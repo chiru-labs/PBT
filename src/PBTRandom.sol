@@ -11,6 +11,8 @@ error NoMintedTokenForChip();
 error ArrayLengthMismatch();
 error ChipAlreadyLinkedToMintedToken();
 error UpdatingChipForUnsetChipMapping();
+error InvalidRandomIndex();
+error NoMoreRemainingTokens();
 error InvalidBlockNumber();
 error BlockNumberTooOld();
 
@@ -34,7 +36,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     uint128 private _numAvailableRemainingTokens;
 
     // Data structure used for Fisher Yates shuffle
-    mapping(uint128 => uint128) private _availableRemainingTokens;
+    mapping(uint128 => uint128) internal _availableRemainingTokens;
 
     constructor(string memory name_, string memory symbol_, uint128 maxSupply_) ERC721ReadOnly(name_, symbol_) {
         maxSupply = maxSupply_;
@@ -159,15 +161,15 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
             )
         );
         uint128 randomIndex = uint128(randomNum % numAvailableRemainingTokens);
-        uint128 tokenId = getAvailableTokenAtIndex(randomIndex, numAvailableRemainingTokens);
-        _numAvailableRemainingTokens--;
-        return tokenId;
+        return _setAvailableTokenAtIndex(randomIndex);
     }
 
-    function getAvailableTokenAtIndex(uint128 indexToUse, uint128 numAvailableRemainingTokens)
-        internal
-        returns (uint128)
-    {
+    function _setAvailableTokenAtIndex(uint128 indexToUse) internal returns (uint128) {
+        uint128 numAvailableRemainingTokens = _numAvailableRemainingTokens;
+        if (indexToUse >= numAvailableRemainingTokens) {
+            revert InvalidRandomIndex();
+        }
+
         uint128 valAtIndex = _availableRemainingTokens[indexToUse];
         uint128 result;
         if (valAtIndex == 0) {
@@ -192,6 +194,8 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
                 delete _availableRemainingTokens[lastIndex];
             }
         }
+
+        _numAvailableRemainingTokens--;
 
         return result;
     }
