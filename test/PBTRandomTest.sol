@@ -191,8 +191,7 @@ contract PBTRandomTest is Test {
 
         vm.expectRevert(InvalidSignature.selector);
         pbt.getTokenDataForChipSignature(signature, blockNumber);
-
-        uint256 tokenId = pbt.mintTokenWithChip(signature, blockNumber);
+        pbt.mintTokenWithChip(signature, blockNumber);
 
         // Current block number is the same as the signature block number which is invalid
         vm.expectRevert(InvalidBlockNumber.selector);

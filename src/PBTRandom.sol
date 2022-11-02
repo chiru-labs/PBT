@@ -93,7 +93,6 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         return tokenData.set && tokenData.tokenId == tokenId;
     }
 
-    //
     // Parameters:
     //    to: the address of the new owner
     //    signatureFromChip: signature(receivingAddress + recentBlockhash), signed by an approved chip
@@ -147,21 +146,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
             revert NoMoreTokenIds();
         }
 
-        // Devs can swap this out for something less gameable like chainlink if it makes sense for their use case.
-        uint256 randomNum = uint256(
-            keccak256(
-                abi.encode(
-                    _msgSender(),
-                    tx.gasprice,
-                    block.number,
-                    block.timestamp,
-                    block.difficulty,
-                    blockhash(block.number - 1),
-                    address(this),
-                    numAvailableRemainingTokens
-                )
-            )
-        );
+        uint256 randomNum = _getRandomNum(numAvailableRemainingTokens);
         uint128 randomIndex = uint128(randomNum % numAvailableRemainingTokens);
         uint128 valAtIndex = _availableRemainingTokens[randomIndex];
 
@@ -192,6 +177,24 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         _numAvailableRemainingTokens--;
 
         return result;
+    }
+
+    // Devs can swap this out for something less gameable like chainlink if it makes sense for their use case.
+    function _getRandomNum(uint256 numAvailableRemainingTokens) internal view virtual returns (uint256) {
+        return uint256(
+            keccak256(
+                abi.encode(
+                    _msgSender(),
+                    tx.gasprice,
+                    block.number,
+                    block.timestamp,
+                    block.difficulty,
+                    blockhash(block.number - 1),
+                    address(this),
+                    numAvailableRemainingTokens
+                )
+            )
+        );
     }
 
     function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) public override {
