@@ -22,7 +22,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     using ECDSA for bytes32;
 
     struct TokenData {
-        uint128 tokenId;
+        uint256 tokenId;
         address chipAddress;
         bool set;
     }
@@ -31,13 +31,13 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     mapping(address => TokenData) _tokenDatas;
 
     // Max token supply
-    uint128 public immutable maxSupply;
-    uint128 private _numAvailableRemainingTokens;
+    uint256 public immutable maxSupply;
+    uint256 private _numAvailableRemainingTokens;
 
     // Data structure used for Fisher Yates shuffle
-    mapping(uint128 => uint128) internal _availableRemainingTokens;
+    mapping(uint256 => uint256) internal _availableRemainingTokens;
 
-    constructor(string memory name_, string memory symbol_, uint128 maxSupply_) ERC721ReadOnly(name_, symbol_) {
+    constructor(string memory name_, string memory symbol_, uint256 maxSupply_) ERC721ReadOnly(name_, symbol_) {
         maxSupply = maxSupply_;
         _numAvailableRemainingTokens = maxSupply_;
     }
@@ -57,12 +57,11 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
 
         for (uint256 i = 0; i < chipAddressesOld.length; i++) {
             address oldChipAddress = chipAddressesOld[i];
-            TokenData memory oldTokenData = _tokenDatas[oldChipAddress];
-            if (!oldTokenData.set) {
+            if (!_tokenDatas[oldChipAddress].set) {
                 revert UpdatingChipForUnsetChipMapping();
             }
             address newChipAddress = chipAddressesNew[i];
-            uint128 tokenId = oldTokenData.tokenId;
+            uint256 tokenId = _tokenDatas[oldChipAddress].tokenId;
             _tokenDatas[newChipAddress] = TokenData(tokenId, newChipAddress, true);
             emit PBTChipRemapping(tokenId, oldChipAddress, newChipAddress);
             delete _tokenDatas[oldChipAddress];
@@ -70,11 +69,10 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     }
 
     function tokenIdFor(address chipAddress) external view override returns (uint256) {
-        TokenData memory tokenData = _tokenDatas[chipAddress];
-        if (!tokenData.set) {
+        if (!_tokenDatas[chipAddress].set) {
             revert NoMintedTokenForChip();
         }
-        return tokenData.tokenId;
+        return _tokenDatas[chipAddress].tokenId;
     }
 
     // Returns true if the signer of the signature of the payload is the chip for the token id
@@ -89,8 +87,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         }
         bytes32 signedHash = keccak256(payload).toEthSignedMessageHash();
         address chipAddr = signedHash.recover(signature);
-        TokenData memory tokenData = _tokenDatas[chipAddr];
-        return tokenData.set && tokenData.tokenId == tokenId;
+        return _tokenDatas[chipAddr].set && _tokenDatas[chipAddr].tokenId == tokenId;
     }
 
     // Parameters:
@@ -104,14 +101,13 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     {
         address chipAddr = _getChipAddrForChipSignature(signatureFromChip, blockNumberUsedInSig);
 
-        TokenData memory tokenData = _tokenDatas[chipAddr];
-        if (tokenData.set) {
+        if (_tokenDatas[chipAddr].set) {
             revert ChipAlreadyLinkedToMintedToken();
-        } else if (tokenData.chipAddress != chipAddr) {
+        } else if (_tokenDatas[chipAddr].chipAddress != chipAddr) {
             revert InvalidChipAddress();
         }
 
-        uint128 tokenId = _useRandomAvailableTokenId();
+        uint256 tokenId = _useRandomAvailableTokenId();
         _mint(_msgSender(), tokenId);
         _tokenDatas[chipAddr] = TokenData(tokenId, chipAddr, true);
 
@@ -140,17 +136,17 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     //    - update the _availableRemainingTokens mapping state
     //        - set _availableRemainingTokens[randIndex] to either the index or the value of the last entry in the mapping (depends on the last entry's state)
     //        - decrement _numAvailableRemainingTokens to mimic the shrinking of an array
-    function _useRandomAvailableTokenId() internal returns (uint128) {
-        uint128 numAvailableRemainingTokens = _numAvailableRemainingTokens;
+    function _useRandomAvailableTokenId() internal returns (uint256) {
+        uint256 numAvailableRemainingTokens = _numAvailableRemainingTokens;
         if (numAvailableRemainingTokens == 0) {
             revert NoMoreTokenIds();
         }
 
         uint256 randomNum = _getRandomNum(numAvailableRemainingTokens);
-        uint128 randomIndex = uint128(randomNum % numAvailableRemainingTokens);
-        uint128 valAtIndex = _availableRemainingTokens[randomIndex];
+        uint256 randomIndex = randomNum % numAvailableRemainingTokens;
+        uint256 valAtIndex = _availableRemainingTokens[randomIndex];
 
-        uint128 result;
+        uint256 result;
         if (valAtIndex == 0) {
             // This means the index itself is still an available token
             result = randomIndex;
@@ -159,11 +155,11 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
             result = valAtIndex;
         }
 
-        uint128 lastIndex = numAvailableRemainingTokens - 1;
+        uint256 lastIndex = numAvailableRemainingTokens - 1;
         if (randomIndex != lastIndex) {
             // Replace the value at randomIndex, now that it's been used.
             // Replace it with the data from the last index in the array, since we are going to decrease the array size afterwards.
-            uint128 lastValInArray = _availableRemainingTokens[lastIndex];
+            uint256 lastValInArray = _availableRemainingTokens[lastIndex];
             if (lastValInArray == 0) {
                 // This means the index itself is still an available token
                 _availableRemainingTokens[randomIndex] = lastIndex;
@@ -215,7 +211,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         bool useSafeTransferFrom
     ) internal virtual {
         TokenData memory tokenData = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
-        uint128 tokenId = tokenData.tokenId;
+        uint256 tokenId = tokenData.tokenId;
         if (useSafeTransferFrom) {
             _safeTransfer(ownerOf(tokenId), _msgSender(), tokenId, "");
         } else {

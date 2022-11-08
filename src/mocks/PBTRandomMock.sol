@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import "../PBTRandom.sol";
 
 contract PBTRandomMock is PBTRandom {
-    constructor(string memory name_, string memory symbol_, uint128 supply_) PBTRandom(name_, symbol_, supply_) {}
+    constructor(string memory name_, string memory symbol_, uint256 supply_) PBTRandom(name_, symbol_, supply_) {}
 
     function mint(address to, uint256 tokenId) public {
         _mint(to, tokenId);
@@ -37,11 +37,11 @@ contract PBTRandomMock is PBTRandom {
         return _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
     }
 
-    function getAvailableRemainingTokens(uint128 index) public view returns (uint128) {
+    function getAvailableRemainingTokens(uint256 index) public view returns (uint256) {
         return _availableRemainingTokens[index];
     }
 
-    function useRandomAvailableTokenId() public returns (uint128) {
+    function useRandomAvailableTokenId() public returns (uint256) {
         return _useRandomAvailableTokenId();
     }
 }
