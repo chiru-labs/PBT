@@ -17,7 +17,7 @@ From the [Azuki](https://twitter.com/AzukiOfficial) team.
 -   [Draft EIP](https://eips.ethereum.org/EIPS/eip-5791)
 -   [Blog](https://www.azuki.com/updates/pbt)
 
-## How does it work?
+## How does PBT work?
 
 #### Requirements
 
@@ -70,6 +70,19 @@ contract Example is PBTSimple, Ownable {
 ```
 
 As mentioned above, this repo is still in beta and more documentation is on its way. Feel free to contact [@2pmflow](https://twitter.com/2pmflow) if you have any questions.
+
+## How do I use PBT for my project?
+
+TODO: flesh this section out more
+
+3 key parts.
+- Acquire chips, embed them into the physical items.
+  - The Azuki hoodies used chips from [kongiscash](https://twitter.com/kongiscash).
+- Write, deploy and seed a smart contract (use this repo).
+  - Deployed examples: [Azuki Golden Skateboard](https://etherscan.io/address/0x6853449a65b264478a4cd90903a65f0508441ac0#code), [Azuki x Ambush Hoodie](https://etherscan.io/address/0xc20ae005e1340dab2449304158f999bfdd1aac1c#code).
+- Set up a simple frontend to support minting/transferring the PBT.
+  - [Azuki's UX flow for reference](https://twitter.com/0xElectrico/status/1599933852537225217).
+  - For now, a working end-to-end flow will also require building out a simple frontend for a mobile browser to grab chip signatures to pass into the smart contract. We will soon be open-sourcing a light js lib that can help with that piece. Until then, feel free to DM [@2pmflow](https://twitter.com/2pmflow) on Twitter for code snippets in the frontend domain.
 
 ## Contributing
 
