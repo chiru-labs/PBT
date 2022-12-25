@@ -79,9 +79,10 @@ TODO: flesh this section out more
 - Acquire chips, embed them into the physical items.
   - The Azuki hoodies used chips from [kongiscash](https://twitter.com/kongiscash).
   - Before you sell/ship the physicals, make sure you save the public keys of the chips first, since the smart contract you deploy will need to know which chips are applicable to it. For kongiscash chips, you can use their [bulk scanning tool](https://bulk.vrfy.ch/) to do so.
-- Write, deploy and seed a smart contract (use this repo).
+- Write and deploy a PBT smart contract (use this repo).
   - Deployed examples: [Azuki Golden Skateboard](https://etherscan.io/address/0x6853449a65b264478a4cd90903a65f0508441ac0#code), [Azuki x Ambush Hoodie](https://etherscan.io/address/0xc20ae005e1340dab2449304158f999bfdd1aac1c#code).
-  - If kongiscash chips were used, use their [bulk scanner tool](https://bulk.vrfy.ch/) to grab addresses to seed the contract with.
+  - The chip addresses also need to be seeded into the contract as an allowlist for which chips can mint and transfer
+    - [Example txn](https://etherscan.io/tx/0x10bdd555a7addc650b1355d7606fd4d7b48bf990802f1235d874b598fa5cc0c5).
 - Set up a simple frontend to support minting/transferring the PBT.
   - [Azuki's UX flow for reference](https://twitter.com/0xElectrico/status/1599933852537225217).
   - For now, a working end-to-end flow will also require building out a simple frontend for a mobile browser to grab chip signatures to pass into the smart contract. We will soon be open-sourcing a light js lib that can help with that piece. Until then, feel free to DM [@2pmflow](https://twitter.com/2pmflow) on Twitter for code snippets in the frontend domain.
