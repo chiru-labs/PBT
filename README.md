@@ -78,6 +78,7 @@ TODO: flesh this section out more
 3 key parts.
 - Acquire chips, embed them into the physical items.
   - The Azuki hoodies used chips from [kongiscash](https://twitter.com/kongiscash).
+  - Before you sell/ship the physicals, make sure you save the public keys of the chips first, since the smart contract you deploy will need to know which chips are applicable to it. For kongiscash chips, you can use their [bulk scanning tool](https://bulk.vrfy.ch/) to do so.
 - Write, deploy and seed a smart contract (use this repo).
   - Deployed examples: [Azuki Golden Skateboard](https://etherscan.io/address/0x6853449a65b264478a4cd90903a65f0508441ac0#code), [Azuki x Ambush Hoodie](https://etherscan.io/address/0xc20ae005e1340dab2449304158f999bfdd1aac1c#code).
   - If kongiscash chips were used, use their [bulk scanner tool](https://bulk.vrfy.ch/) to grab addresses to seed the contract with.
