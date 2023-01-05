@@ -87,6 +87,14 @@ TODO: flesh this section out more
   - [Azuki's UX flow for reference](https://twitter.com/0xElectrico/status/1599933852537225217).
   - For now, a working end-to-end flow will also require building out a simple frontend for a mobile browser to grab chip signatures to pass into the smart contract. We will soon be open-sourcing a light js lib that can help with that piece. Until then, feel free to DM [@2pmflow](https://twitter.com/2pmflow) on Twitter for code snippets in the frontend domain.
 
+## TODO
+- [ ] CI pipeline
+- [ ] PBT Locking extension (where transfers need to be approved by the current owner first)
+- [ ] PBT implementation that doesn't require seeding chip addresses to the contract pre-mint
+  - how this would work: the mint function takes in a <tokenId, chipAddress> message that's signed by a blessed signer that the contract verifies
+
+Contributions welcome!
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
