@@ -79,6 +79,7 @@ TODO: flesh this section out more
 - Acquire chips, embed them into the physical items.
   - The Azuki hoodies used chips from [kongiscash](https://twitter.com/kongiscash).
   - Before you sell/ship the physicals, make sure you save the public keys of the chips first, since the smart contract you deploy will need to know which chips are applicable to it. For kongiscash chips, you can use their [bulk scanning tool](https://bulk.vrfy.ch/) to do so.
+    - Note: for now when you scan a Kong chip, a system notification may popup, even when the scan is prompted from a browser action. To configure this notification's destination url, contact [cameron@arx.org](cameron@arx.org) for now - Kong is currently working on moving this process towards decentralized on-chain registrations.
 - Write and deploy a PBT smart contract (use this repo).
   - Deployed examples: [Azuki Golden Skateboard](https://etherscan.io/address/0x6853449a65b264478a4cd90903a65f0508441ac0#code), [Azuki x Ambush Hoodie](https://etherscan.io/address/0xc20ae005e1340dab2449304158f999bfdd1aac1c#code).
   - The chip addresses also need to be seeded into the contract as an allowlist for which chips can mint and transfer
