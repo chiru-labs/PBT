@@ -11,6 +11,8 @@ PBT aims to mitigate these issues in a decentralized way through a new token sta
 From the [Azuki](https://twitter.com/AzukiOfficial) team.
 **Chiru Labs is not liable for any outcomes as a result of using PBT**, DYOR. Repo still in beta.
 
+Note: the frontend library for chip signatures can be found [here](https://github.com/chiru-labs/pbt-chip-client).
+
 ## Resources
 
 -   [pbt.io](https://www.pbt.io/)
@@ -37,7 +39,7 @@ On a high level:
 -   The NFT can only be transferred to a different owner if a signature from the chip is supplied to the contract.
 -   This guarantees that a token cannot be transferred without consent from the owner of the physical item.
 
-More details available in the [EIP](https://github.com/ethereum/EIPs/pull/5791) and inlined into `IPBT.sol`.
+More details available in the [EIP](https://eips.ethereum.org/EIPS/eip-5791) and inlined into `IPBT.sol`.
 
 #### Reference Implementation
 
@@ -86,7 +88,7 @@ TODO: flesh this section out more
     - [Example txn](https://etherscan.io/tx/0x10bdd555a7addc650b1355d7606fd4d7b48bf990802f1235d874b598fa5cc0c5).
 - Set up a simple frontend to support minting/transferring the PBT.
   - [Azuki's UX flow for reference](https://twitter.com/0xElectrico/status/1599933852537225217).
-  - For now, a working end-to-end flow will also require building out a simple frontend for a mobile browser to grab chip signatures to pass into the smart contract. We will soon be open-sourcing a light js lib that can help with that piece. Until then, feel free to DM [@2pmflow](https://twitter.com/2pmflow) on Twitter for code snippets in the frontend domain.
+  - For now, a working end-to-end flow will also require building out a simple frontend for a mobile browser to grab chip signatures to pass into the smart contract. We have open-sourced a [light js lib](https://github.com/chiru-labs/pbt-chip-client) to help with that piece.
 
 ## TODO
 - [ ] CI pipeline
