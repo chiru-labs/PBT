@@ -11,6 +11,8 @@ PBT aims to mitigate these issues in a decentralized way through a new token sta
 From the [Azuki](https://twitter.com/AzukiOfficial) team.
 **Chiru Labs is not liable for any outcomes as a result of using PBT**, DYOR. Repo still in beta.
 
+Note: the frontend library for chip signatures can be found [here](https://github.com/chiru-labs/pbt-chip-client).
+
 ## Resources
 
 -   [pbt.io](https://www.pbt.io/)
@@ -37,7 +39,7 @@ On a high level:
 -   The NFT can only be transferred to a different owner if a signature from the chip is supplied to the contract.
 -   This guarantees that a token cannot be transferred without consent from the owner of the physical item.
 
-More details available in the [EIP](https://github.com/ethereum/EIPs/pull/5791) and inlined into `IPBT.sol`.
+More details available in the [EIP](https://eips.ethereum.org/EIPS/eip-5791) and inlined into `IPBT.sol`.
 
 #### Reference Implementation
 
