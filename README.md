@@ -88,6 +88,7 @@ TODO: flesh this section out more
     - [Example txn](https://etherscan.io/tx/0x10bdd555a7addc650b1355d7606fd4d7b48bf990802f1235d874b598fa5cc0c5).
 - Set up a simple frontend to support minting/transferring the PBT.
   - [Azuki's UX flow for reference](https://twitter.com/0xElectrico/status/1599933852537225217).
+    - The flow is initiated from desktop. The user is beamed to a mobile webapp through a QR code to do the scan. After the scan, the mobile webapp writes the signature to a server, and the desktop webapp polls the server to get the signature. User completes the mint on desktop.
   - For now, a working end-to-end flow will also require building out a simple frontend for a mobile browser to grab chip signatures to pass into the smart contract. We have open-sourced a [light js lib](https://github.com/chiru-labs/pbt-chip-client) to help with that piece.
 
 ## TODO
