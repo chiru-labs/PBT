@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/mocks/ERC721ReadOnlyMock.sol";
+import "../../src/v1/mocks/ERC721ReadOnlyMock.sol";
 
 contract ERC721ReadOnlyTest is Test {
     address public user1 = vm.addr(1);

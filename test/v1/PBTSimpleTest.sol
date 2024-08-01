@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
-import "../src/mocks/PBTSimpleMock.sol";
+import "../../src/v1/mocks/PBTSimpleMock.sol";
 
 contract PBTSimpleTest is Test {
     event PBTMint(uint256 indexed tokenId, address indexed chipAddress);
