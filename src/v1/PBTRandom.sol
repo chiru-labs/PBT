@@ -193,7 +193,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
                     tx.gasprice,
                     block.number,
                     block.timestamp,
-                    block.difficulty,
+                    block.prevrandao,
                     blockhash(block.number - 1),
                     address(this),
                     numAvailableRemainingTokens
