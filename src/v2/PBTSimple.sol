@@ -3,8 +3,8 @@ pragma solidity ^0.8.26;
 
 import "./IPBT.sol";
 import "./ERC721ReadOnly.sol";
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
+import "solady/utils/ECDSA.sol";
+import "solady/utils/SignatureCheckerLib.sol";
 
 /// @dev Implementation of PBT where all chipId->tokenIds are preset in the contract by the contract owner.
 contract PBTSimple is ERC721ReadOnly, IPBT {
@@ -13,7 +13,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     uint256 public immutable maxDurationWindow;
 
     /// @dev A mapping of the `chipId` to the nonce to be used in its signature.
-    mapping(address chipId => uint256 nonce) public chipNonce;
+    mapping(address chipId => bytes32 nonce) public chipNonce;
 
     /// @dev Mapping of `tokenId` to `chipId`.
     ///      The `chipId` is the public address of the chip's private key, and cannot be zero.
@@ -43,9 +43,9 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         bytes memory chipSig,
         uint256 sigTimestamp,
         bool useSafeTransfer,
-        bytes memory /* extras */
+        bytes memory extras
     ) public virtual {
-        _validateSigAndUpdateNonce(to, chipId, chipSig, sigTimestamp);
+        _validateSigAndUpdateNonce(to, chipId, chipSig, sigTimestamp, extras);
         _transferPBT(to, tokenIdFor(chipId), useSafeTransfer, "");
     }
 
@@ -56,7 +56,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         returns (bool)
     {
         bytes32 sigHash = ECDSA.toEthSignedMessageHash(keccak256(data));
-        return SignatureChecker.isValidSignatureNow(_chipIds[tokenId], sigHash, sig);
+        return SignatureCheckerLib.isValidSignatureNow(_chipIds[tokenId], sigHash, sig);
     }
 
     /// @dev Returns the `tokenId` two-way-assigned to `chipId`.
@@ -64,7 +64,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     function tokenIdFor(address chipId) public view returns (uint256 tokenId) {
         if (chipId == address(0)) revert ChipIdIsZeroAddress();
         tokenId = _tokenIds[chipId];
-        if (_chipIds[tokenId] == address(0)) revert NoMappedTokenForChip();
+        if (_chipIds[tokenId] != chipId) revert NoMappedTokenForChip();
     }
 
     /// @dev For ERC-165
@@ -73,34 +73,35 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     }
 
     /// @dev Mints to `to`, using `chipId`.
-    function _mintPBT(address to, address chipId, bytes memory chipSig, uint256 sigTimestamp)
+    function _mint(address to, address chipId, bytes memory chipSig, uint256 sigTimestamp, bytes memory extras)
         internal
         virtual
         returns (uint256 tokenId)
     {
-        tokenId = _beforeMintPBT(to, chipId, chipSig, sigTimestamp);
+        tokenId = _beforeMint(to, chipId, chipSig, sigTimestamp, extras);
         _mint(to, tokenId); // Reverts if `tokenId` already exists.
     }
 
     /// @dev Mints to `to`, using `chipId`. Performs a post transfer check.
-    function _safeMintPBT(
+    function _safeMint(
         address to,
         address chipId,
         bytes memory chipSig,
         uint256 sigTimestamp,
+        bytes memory extras,
         bytes memory data
     ) internal virtual returns (uint256 tokenId) {
-        tokenId = _beforeMintPBT(to, chipId, chipSig, sigTimestamp);
+        tokenId = _beforeMint(to, chipId, chipSig, sigTimestamp, extras);
         _safeMint(to, tokenId, data); // Reverts if `tokenId` already exists.
     }
 
     /// @dev Called at the beginning of `_mint` and `_safeMint` for 
-    function _beforeMintPBT(address to, address chipId, bytes memory chipSig, uint256 sigTimestamp)
+    function _beforeMint(address to, address chipId, bytes memory chipSig, uint256 sigTimestamp, bytes memory extras)
         internal
         virtual
         returns (uint256 tokenId)
     {
-        _validateSigAndUpdateNonce(to, chipId, chipSig, sigTimestamp);
+        _validateSigAndUpdateNonce(to, chipId, chipSig, sigTimestamp, extras);
         // For PBT mints, we have to require that the `tokenId` has an assigned `chipId`.
         tokenId = _tokenIds[chipId];
         if (_chipIds[tokenId] == address(0)) revert NoMappedTokenForChip();
@@ -111,17 +112,18 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         address to,
         address chipId,
         bytes memory chipSig,
-        uint256 sigTimestamp
+        uint256 sigTimestamp,
+        bytes memory extras
     ) internal virtual {
-        bytes32 sigHash = _sigHash(sigTimestamp, chipId, to);
-        if (!SignatureChecker.isValidSignatureNow(chipId, sigHash, chipSig)) {
+        bytes32 sigHash = _sigHash(sigTimestamp, chipId, to, extras);
+        if (!SignatureCheckerLib.isValidSignatureNow(chipId, sigHash, chipSig)) {
             revert InvalidSignature();
         }
-        chipNonce[chipId] = uint256(sigHash) ^ uint256(blockhash(block.number - 1));
+        chipNonce[chipId] = bytes32(uint256(sigHash) ^ uint256(blockhash(block.number - 1)));
     }
 
     /// @dev Returns the digest to be signed by the `chipId`.
-    function _sigHash(uint256 sigTimestamp, address chipId, address to)
+    function _sigHash(uint256 sigTimestamp, address chipId, address to, bytes memory extras)
         internal
         virtual
         returns (bytes32)
@@ -129,7 +131,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         if (sigTimestamp > block.timestamp) revert DigestTimestampInFuture();
         if (sigTimestamp + maxDurationWindow < block.timestamp) revert DigestTimestampTooOld();
         bytes32 hash = keccak256(
-            abi.encode(address(this), block.chainid, chipNonce[chipId], to, sigTimestamp)
+            abi.encode(address(this), block.chainid, chipNonce[chipId], to, sigTimestamp, keccak256(extras))
         );
         return ECDSA.toEthSignedMessageHash(hash);
     }
@@ -148,13 +150,20 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     /// @dev Two-way-assigns `chipId` to `tokenId`.
     /// `tokenId` does not need to exist during assignment.
     /// Emits a {ChipSet} event.
-    /// - To change the `chipId`, use `_setChip(tokenIdFor(chipId), newChipId)`.
+    /// - To use it on a `chipId`, use `_setChip(tokenIdFor(chipId), newChipId)`.
     /// - Use this in a loop if you need.
     function _setChip(uint256 tokenId, address chipId) internal {
         if (chipId == address(0)) revert ChipIdIsZeroAddress();
-        _tokenIds[_chipIds[tokenId]] = 0;
-        _tokenIds[chipId] = tokenId;
         _chipIds[tokenId] = chipId;
+        _tokenIds[chipId] = tokenId;
         emit ChipSet(tokenId, chipId);
+    }
+
+    /// @dev Removes the two-way-assignment of `tokenId` to its `chipId`.
+    /// - To use it on a `chipId`, use `_unsetChip(tokenIdFor(chipId))`.
+    /// - Use this in a loop if you need.
+    function _unsetChip(uint256 tokenId) internal {
+        _chipIds[tokenId] = address(0);
+        emit ChipSet(tokenId, address(0));
     }
 }
