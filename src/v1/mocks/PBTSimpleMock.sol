@@ -38,7 +38,7 @@ contract PBTSimpleMock is PBTSimple {
     function getTokenDataForChipSignature(
         bytes calldata signatureFromChip,
         uint256 blockNumberUsedInSig
-    ) public returns (TokenData memory) {
+    ) public view returns (TokenData memory) {
         return _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
     }
 }
