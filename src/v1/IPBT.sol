@@ -12,7 +12,6 @@ import "@openzeppelin/contracts/utils/Strings.sol";
  * @dev Contract for PBTs (Physical Backed Tokens).
  * NFTs that are backed by a physical asset, through a chip embedded in the physical asset.
  */
-
 interface IPBT {
     /// @notice Returns the token id for a given chip address.
     /// @dev Throws if there is no existing token for the chip in the collection.
@@ -26,10 +25,11 @@ interface IPBT {
     /// @param payload Arbitrary data that is signed by the chip to produce the signature param.
     /// @param signature Chip's signature of the passed-in payload.
     /// @return Whether the signature of the payload was signed by the chip linked to the token id.
-    function isChipSignatureForToken(uint256 tokenId, bytes calldata payload, bytes calldata signature)
-        external
-        view
-        returns (bool);
+    function isChipSignatureForToken(
+        uint256 tokenId,
+        bytes calldata payload,
+        bytes calldata signature
+    ) external view returns (bool);
 
     /// @notice Transfers the token into the message sender's wallet.
     /// @param signatureFromChip An EIP-191 signature of (msgSender, blockhash), where blockhash is the block hash for blockNumberUsedInSig.
@@ -47,12 +47,15 @@ interface IPBT {
     ) external;
 
     /// @notice Calls transferTokenWithChip as defined above, with useSafeTransferFrom set to false.
-    function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) external;
+    function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
+        external;
 
     /// @notice Emitted when a token is minted.
     event PBTMint(uint256 indexed tokenId, address indexed chipAddress);
 
     /// @notice Emitted when a token is mapped to a different chip.
     /// Chip replacements may be useful in certain scenarios (e.g. chip defect).
-    event PBTChipRemapping(uint256 indexed tokenId, address indexed oldChipAddress, address indexed newChipAddress);
+    event PBTChipRemapping(
+        uint256 indexed tokenId, address indexed oldChipAddress, address indexed newChipAddress
+    );
 }

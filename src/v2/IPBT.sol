@@ -6,7 +6,7 @@ pragma solidity ^0.8.26;
 interface IPBT {
     /// @notice Returns the ERC-721 token ID for a given chip address.
     /// @dev Throws if there is no existing token for the chip in the collection.
-    /// @param chipId The address for the chip embedded in the physical item 
+    /// @param chipId The address for the chip embedded in the physical item
     ///               (computed from the chip's public key).
     function tokenIdFor(address chipId) external view returns (uint256);
 
@@ -26,14 +26,14 @@ interface IPBT {
     /// @param sigTimestamp        Timestamp used in `chipSig`.
     /// @param useSafeTransferFrom Whether ERC-721's `safeTransferFrom` should be used,
     ///                            instead of `transferFrom`.
-    /// @param payload             Additional data that can be used for additional logic/context
+    /// @param extras              Additional data that can be used for additional logic/context
     ///                            when the PBT is transferred.
     function transferToken(
         address chipId,
         bytes calldata chipSig,
         uint256 sigTimestamp,
         bool useSafeTransferFrom,
-        bytes calldata payload
+        bytes calldata extras
     ) external;
 
     /// @notice Emitted when `tokenId` is minted by `chipId`.
@@ -41,5 +41,7 @@ interface IPBT {
 
     /// @notice Emitted when `tokenId` is mapped to a different chip.
     /// Chip replacements may be useful in certain scenarios (e.g. chip defect).
-    event PBTChipRemapping(uint256 indexed tokenId, address indexed oldChipId, address indexed newChipId);
+    event PBTChipRemapping(
+        uint256 indexed tokenId, address indexed oldChipId, address indexed newChipId
+    );
 }

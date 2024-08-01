@@ -37,7 +37,9 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     // Data structure used for Fisher Yates shuffle
     mapping(uint256 => uint256) internal _availableRemainingTokens;
 
-    constructor(string memory name_, string memory symbol_, uint256 maxSupply_) ERC721ReadOnly(name_, symbol_) {
+    constructor(string memory name_, string memory symbol_, uint256 maxSupply_)
+        ERC721ReadOnly(name_, symbol_)
+    {
         maxSupply = maxSupply_;
         _numAvailableRemainingTokens = maxSupply_;
     }
@@ -50,7 +52,9 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     }
 
     // TODO: consider preventing multiple chip addresses mapping to the same tokenId (store a tokenId->chip mapping)
-    function _updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew) internal {
+    function _updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew)
+        internal
+    {
         if (chipAddressesOld.length != chipAddressesNew.length) {
             revert ArrayLengthMismatch();
         }
@@ -176,7 +180,12 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
     }
 
     // Devs can swap this out for something less gameable like chainlink if it makes sense for their use case.
-    function _getRandomNum(uint256 numAvailableRemainingTokens) internal view virtual returns (uint256) {
+    function _getRandomNum(uint256 numAvailableRemainingTokens)
+        internal
+        view
+        virtual
+        returns (uint256)
+    {
         return uint256(
             keccak256(
                 abi.encode(
@@ -193,7 +202,10 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         );
     }
 
-    function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) public override {
+    function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
+        public
+        override
+    {
         transferTokenWithChip(signatureFromChip, blockNumberUsedInSig, false);
     }
 
@@ -210,7 +222,8 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         uint256 blockNumberUsedInSig,
         bool useSafeTransferFrom
     ) internal virtual {
-        TokenData memory tokenData = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
+        TokenData memory tokenData =
+            _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
         uint256 tokenId = tokenData.tokenId;
         if (useSafeTransferFrom) {
             _safeTransfer(ownerOf(tokenId), _msgSender(), tokenId, "");
@@ -219,11 +232,10 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         }
     }
 
-    function _getTokenDataForChipSignature(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
-        internal
-        view
-        returns (TokenData memory)
-    {
+    function _getTokenDataForChipSignature(
+        bytes calldata signatureFromChip,
+        uint256 blockNumberUsedInSig
+    ) internal view returns (TokenData memory) {
         address chipAddr = _getChipAddrForChipSignature(signatureFromChip, blockNumberUsedInSig);
         TokenData memory tokenData = _tokenDatas[chipAddr];
         if (tokenData.set) {
@@ -232,11 +244,10 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         revert InvalidSignature();
     }
 
-    function _getChipAddrForChipSignature(bytes memory signatureFromChip, uint256 blockNumberUsedInSig)
-        internal
-        view
-        returns (address)
-    {
+    function _getChipAddrForChipSignature(
+        bytes memory signatureFromChip,
+        uint256 blockNumberUsedInSig
+    ) internal view returns (address) {
         // The blockNumberUsedInSig must be in a previous block because the blockhash of the current
         // block does not exist yet.
         if (block.number <= blockNumberUsedInSig) {
@@ -248,7 +259,8 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         }
 
         bytes32 blockHash = blockhash(blockNumberUsedInSig);
-        bytes32 signedHash = keccak256(abi.encodePacked(_msgSender(), blockHash)).toEthSignedMessageHash();
+        bytes32 signedHash =
+            keccak256(abi.encodePacked(_msgSender(), blockHash)).toEthSignedMessageHash();
         return signedHash.recover(signatureFromChip);
     }
 

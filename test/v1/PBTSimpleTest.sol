@@ -189,9 +189,13 @@ contract PBTSimpleTest is Test {
         assertEq(pbt.tokenIdMappedFor(chipAddr3), tokenId3);
     }
 
-    function _createSignature(bytes memory payload, uint256 chipAddrNum) private returns (bytes memory signature) {
+    function _createSignature(bytes memory payload, uint256 chipAddrNum)
+        private
+        returns (bytes memory signature)
+    {
         bytes32 payloadHash = keccak256(abi.encodePacked(payload));
-        bytes32 signedHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
+        bytes32 signedHash =
+            keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(chipAddrNum, signedHash);
         signature = abi.encodePacked(r, s, v);
     }
@@ -200,7 +204,8 @@ contract PBTSimpleTest is Test {
         // Create signature from payload
         bytes memory payload = abi.encodePacked("ThisIsPBTSimple");
         bytes32 payloadHash = keccak256(payload);
-        bytes32 signedHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
+        bytes32 signedHash =
+            keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(101, signedHash);
         bytes memory chipSignature = abi.encodePacked(r, s, v);
 
@@ -222,7 +227,11 @@ contract PBTSimpleTest is Test {
         assertEq(pbt.balanceOf(user1), 1);
     }
 
-    function testTransferTokenWithChip(bool useSafeTranfer) public setChipTokenMapping mintedTokens {
+    function testTransferTokenWithChip(bool useSafeTranfer)
+        public
+        setChipTokenMapping
+        mintedTokens
+    {
         vm.roll(blockNumber + 1);
 
         // Create inputs

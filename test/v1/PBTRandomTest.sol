@@ -7,7 +7,9 @@ import "../../src/v1/mocks/PBTRandomMock.sol";
 
 contract PBTRandomTest is Test {
     event PBTMint(uint256 indexed tokenId, address indexed chipAddress);
-    event PBTChipRemapping(uint256 indexed tokenId, address indexed oldChipAddress, address indexed newChipAddress);
+    event PBTChipRemapping(
+        uint256 indexed tokenId, address indexed oldChipAddress, address indexed newChipAddress
+    );
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
 
     PBTRandomMock public pbt;
@@ -27,14 +29,21 @@ contract PBTRandomTest is Test {
         pbt = new PBTRandomMock("PBTRandom", "PBTR", 10);
     }
 
-    function _createSignature(bytes memory payload, uint256 chipAddrNum) private returns (bytes memory signature) {
+    function _createSignature(bytes memory payload, uint256 chipAddrNum)
+        private
+        returns (bytes memory signature)
+    {
         bytes32 payloadHash = keccak256(abi.encodePacked(payload));
-        bytes32 signedHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
+        bytes32 signedHash =
+            keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", payloadHash));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(chipAddrNum, signedHash);
         signature = abi.encodePacked(r, s, v);
     }
 
-    function _createSignature(bytes32 payload, uint256 chipAddrNum) private returns (bytes memory signature) {
+    function _createSignature(bytes32 payload, uint256 chipAddrNum)
+        private
+        returns (bytes memory signature)
+    {
         return _createSignature(abi.encodePacked(payload), chipAddrNum);
     }
 
