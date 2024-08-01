@@ -62,6 +62,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     /// @dev Returns the `tokenId` two-way-assigned to `chipId`.
     ///      Reverts if there is no assignment for `chipId`.
     function tokenIdFor(address chipId) public view returns (uint256 tokenId) {
+        if (chipId == address(0)) revert ChipIdIsZeroAddress();
         tokenId = _tokenIds[chipId];
         if (_chipIds[tokenId] == address(0)) revert NoMappedTokenForChip();
     }
@@ -93,7 +94,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         _safeMint(to, tokenId, data); // Reverts if `tokenId` already exists.
     }
 
-    /// @dev Called at the beginning of `_mint` and `_safeMint` for
+    /// @dev Called at the beginning of `_mint` and `_safeMint` for 
     function _beforeMintPBT(address to, address chipId, bytes memory chipSig, uint256 sigTimestamp)
         internal
         virtual
@@ -127,8 +128,9 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     {
         if (sigTimestamp > block.timestamp) revert DigestTimestampInFuture();
         if (sigTimestamp + maxDurationWindow < block.timestamp) revert DigestTimestampTooOld();
-        bytes32 hash =
-            keccak256(abi.encode(address(this), block.chainid, chipNonce[chipId], to, sigTimestamp));
+        bytes32 hash = keccak256(
+            abi.encode(address(this), block.chainid, chipNonce[chipId], to, sigTimestamp)
+        );
         return ECDSA.toEthSignedMessageHash(hash);
     }
 
@@ -150,6 +152,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     /// - Use this in a loop if you need.
     function _setChip(uint256 tokenId, address chipId) internal {
         if (chipId == address(0)) revert ChipIdIsZeroAddress();
+        _tokenIds[_chipIds[tokenId]] = 0;
         _tokenIds[chipId] = tokenId;
         _chipIds[tokenId] = chipId;
         emit ChipSet(tokenId, chipId);
