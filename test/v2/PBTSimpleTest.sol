@@ -206,12 +206,12 @@ contract PBTSimpleTest is SoladyTest {
             t.warppedTimestamp = _bound(_random(), 0, block.timestamp + _MAX_DURATION_WINDOW * 2);
             vm.warp(t.warppedTimestamp);
             if (t.warppedTimestamp < t.sigTimestamp) {
-                vm.expectRevert(PBTSimple.DigestTimestampInFuture.selector);
+                vm.expectRevert(PBTSimple.SignatureTimestampInFuture.selector);
                 pbt.mint(t.to, t.chipId, t.chipSig, t.sigTimestamp, t.extras);
                 return;
             }
             if (t.warppedTimestamp >= t.sigTimestamp + _MAX_DURATION_WINDOW) {
-                vm.expectRevert(PBTSimple.DigestTimestampTooOld.selector);
+                vm.expectRevert(PBTSimple.SignatureTimestampTooOld.selector);
                 pbt.mint(t.to, t.chipId, t.chipSig, t.sigTimestamp, t.extras);
                 return;
             }
@@ -236,6 +236,7 @@ contract PBTSimpleTest is SoladyTest {
         t.to = _randomNonZeroAddress();
         t.chipSig = _genSig(t);
         pbt.transferToken(t.to, t.chipId, t.chipSig, t.sigTimestamp, _randomChance(2), t.extras);
+        assertEq(pbt.ownerOf(t.tokenId), t.to);
     }
 
     function _genSig(_TestTemps memory t, bytes memory data) internal returns (bytes memory) {
