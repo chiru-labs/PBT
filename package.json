@@ -1,18 +1,17 @@
 {
-    "name": "@chiru-labs/pbt",
-    "version": "0.3.0",
-    "description": "Physically Backed Token Contracts in Solidity",
-    "main": "index.js",
-    "files": [
-        "/src/**/*.sol"
-    ],
-    "dependencies": {
-        "@openzeppelin/contracts": "^4.7.3"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git@github.com-cygaar:chiru-labs/PBT.git"
-    },
-    "author": "chiru-labs",
-    "license": "MIT"
+  "name": "@chiru-labs/pbt",
+  "version": "0.3.0",
+  "description": "Contracts for Physical Backed Tokens (ERC-5791). ",
+  "files": [
+    "/src/**/*.sol"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:chiru-labs/PBT.git"
+  },
+  "author": "chiru-labs",
+  "license": "MIT",
+  "dependencies": {
+    "@chiru-labs/pbt": "^0.3.0"
+  }
 }
