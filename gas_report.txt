@@ -1,0 +1,123 @@
+No files changed, compilation skipped
+
+Ran 1 test for test/utils/SoladyTest.sol:SoladyTest
+[PASS] test__codesize() (gas: 1102)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.83ms (495.71µs CPU time)
+
+Ran 1 test for test/utils/TestPlus.sol:TestPlus
+[PASS] test__codesize() (gas: 406)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 3.81ms (381.29µs CPU time)
+
+Ran 5 tests for test/v2/PBTSimpleTest.sol:PBTSimpleTest
+[PASS] testAdvanceBlock(bytes32) (runs: 256, μ: 31391, ~: 31408)
+[PASS] testMintAndEverything(bytes32) (runs: 256, μ: 248453, ~: 292672)
+[PASS] testSetAndGetChip() (gas: 361565)
+[PASS] testSetAndGetChip(bytes32) (runs: 256, μ: 197758, ~: 185631)
+[PASS] test__codesize() (gas: 21150)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 157.29ms (203.89ms CPU time)
+
+Ran 16 tests for test/v1/PBTSimpleTest.sol:PBTSimpleTest
+[PASS] testGetTokenDataForChipSignature() (gas: 150319)
+[PASS] testGetTokenDataForChipSignatureBlockNumTooOld() (gas: 145681)
+[PASS] testGetTokenDataForChipSignatureInvalid() (gas: 154943)
+[PASS] testGetTokenDataForChipSignatureInvalidBlockNumber() (gas: 145520)
+[PASS] testIsChipSignatureForToken() (gas: 286730)
+[PASS] testMintTokenWithChip() (gas: 227486)
+[PASS] testSeedChipToTokenMapping() (gas: 137831)
+[PASS] testSeedChipToTokenMappingExistingToken() (gas: 302573)
+[PASS] testSeedChipToTokenMappingInvalidInput() (gas: 39711)
+[PASS] testSupportsInterface() (gas: 6962)
+[PASS] testTokenIdFor() (gas: 164321)
+[PASS] testTokenIdMappedFor() (gas: 89521)
+[PASS] testTransferTokenWithChip(bool) (runs: 256, μ: 332865, ~: 332712)
+[PASS] testUpdateChips() (gas: 249262)
+[PASS] testUpdateChipsInvalidInput() (gas: 39071)
+[PASS] testUpdateChipsUnsetChip() (gas: 46416)
+Suite result: ok. 16 passed; 0 failed; 0 skipped; finished in 163.40ms (102.25ms CPU time)
+
+Ran 7 tests for test/v1/PBTRandomTest.sol:PBTRandomTest
+[PASS] testGetTokenDataForChipSignature() (gas: 261689)
+[PASS] testGetTokenDataForChipSignatureInvalid() (gas: 271101)
+[PASS] testIsChipSignatureForToken() (gas: 267043)
+[PASS] testSupportsInterface() (gas: 6963)
+[PASS] testTokenIdFor() (gas: 205466)
+[PASS] testTransferTokenWithChip(bool) (runs: 256, μ: 323670, ~: 323526)
+[PASS] testUpdateChips() (gas: 514145)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 163.44ms (162.09ms CPU time)
+
+Ran 5 tests for test/v1/ERC721ReadOnlyTest.sol:ERC721ReadOnlyTest
+[PASS] testApprove() (gas: 32231)
+[PASS] testGetApproved() (gas: 16203)
+[PASS] testIsApprovedForAll() (gas: 10045)
+[PASS] testSetApprovalForAll() (gas: 32268)
+[PASS] testTransferFunctions() (gas: 85044)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 163.42ms (486.46µs CPU time)
+| src/v1/mocks/ERC721ReadOnlyMock.sol:ERC721ReadOnlyMock contract |                 |       |        |       |         |
+|-----------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                 | Deployment Size |       |        |       |         |
+| 874309                                                          | 4463            |       |        |       |         |
+| Function Name                                                   | min             | avg   | median | max   | # calls |
+| approve                                                         | 22044           | 22044 | 22044  | 22044 | 1       |
+| getApproved                                                     | 2581            | 2583  | 2583   | 2586  | 2       |
+| isApprovedForAll                                                | 545             | 545   | 545    | 545   | 1       |
+| mint                                                            | 68743           | 68743 | 68743  | 68743 | 5       |
+| safeTransferFrom(address,address,uint256)                       | 22583           | 22583 | 22583  | 22583 | 1       |
+| safeTransferFrom(address,address,uint256,bytes)                 | 23114           | 23114 | 23114  | 23114 | 1       |
+| setApprovalForAll                                               | 22082           | 22082 | 22082  | 22082 | 1       |
+| transferFrom                                                    | 22539           | 22539 | 22539  | 22539 | 1       |
+
+
+| src/v1/mocks/PBTRandomMock.sol:PBTRandomMock contract |                 |        |        |        |         |
+|-------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                       | Deployment Size |        |        |        |         |
+| 2137463                                               | 10294           |        |        |        |         |
+| Function Name                                         | min             | avg    | median | max    | # calls |
+| getTokenData                                          | 1020            | 1020   | 1020   | 1020   | 4       |
+| getTokenDataForChipSignature                          | 970             | 3388   | 3371   | 5840   | 4       |
+| isChipSignatureForToken                               | 3299            | 4523   | 4523   | 5748   | 2       |
+| mintTokenWithChip                                     | 134282          | 134282 | 134282 | 134294 | 262     |
+| ownerOf                                               | 624             | 624    | 624    | 624    | 512     |
+| seedChipAddresses                                     | 47151           | 96996  | 97285  | 97285  | 261     |
+| supportsInterface                                     | 458             | 510    | 510    | 563    | 2       |
+| tokenIdFor                                            | 830             | 1726   | 1726   | 2622   | 2       |
+| transferTokenWithChip                                 | 65258           | 65402  | 65258  | 65567  | 256     |
+| updateChips                                           | 26441           | 72919  | 72919  | 119398 | 2       |
+
+
+| src/v1/mocks/PBTSimpleMock.sol:PBTSimpleMock contract |                 |        |        |        |         |
+|-------------------------------------------------------|-----------------|--------|--------|--------|---------|
+| Deployment Cost                                       | Deployment Size |        |        |        |         |
+| 2035062                                               | 9856            |        |        |        |         |
+| Function Name                                         | min             | avg    | median | max    | # calls |
+| balanceOf                                             | 657             | 657    | 657    | 657    | 513     |
+| getTokenData                                          | 1020            | 1020   | 1020   | 1020   | 6       |
+| getTokenDataForChipSignature                          | 800             | 4242   | 3292   | 9586   | 4       |
+| isChipSignatureForToken                               | 5774            | 5774   | 5774   | 5774   | 1       |
+| mint                                                  | 68747           | 68747  | 68747  | 68747  | 517     |
+| mintTokenWithChip                                     | 80629           | 80629  | 80629  | 80629  | 1       |
+| seedChipToTokenMapping                                | 24288           | 117231 | 118291 | 118291 | 269     |
+| supportsInterface                                     | 458             | 510    | 510    | 563    | 2       |
+| tokenIdFor                                            | 1056            | 1592   | 1082   | 2640   | 3       |
+| tokenIdMappedFor                                      | 830             | 1723   | 1723   | 2616   | 2       |
+| transferTokenWithChip                                 | 48042           | 48195  | 48042  | 48351  | 256     |
+| updateChips                                           | 23542           | 57397  | 28616  | 120033 | 3       |
+
+
+| src/v2/mocks/PBTSimpleMock.sol:PBTSimpleMock contract |                 |       |        |        |         |
+|-------------------------------------------------------|-----------------|-------|--------|--------|---------|
+| Deployment Cost                                       | Deployment Size |       |        |        |         |
+| 1634044                                               | 8061            |       |        |        |         |
+| Function Name                                         | min             | avg   | median | max    | # calls |
+| chipNonce                                             | 585             | 1269  | 585    | 2585   | 748     |
+| isChipSignatureForToken                               | 1508            | 3303  | 3544   | 5192   | 79      |
+| mint                                                  | 24897           | 86321 | 102722 | 119026 | 256     |
+| ownerOf                                               | 581             | 581   | 581    | 581    | 318     |
+| setChip                                               | 30726           | 65186 | 67738  | 68338  | 747     |
+| tokenIdFor                                            | 449             | 1201  | 872    | 4848   | 2327    |
+| transferToken                                         | 71458           | 74324 | 73668  | 90586  | 144     |
+| unsetChip                                             | 23341           | 23409 | 23353  | 23725  | 306     |
+
+
+
+
+Ran 6 test suites in 229.57ms (655.19ms CPU time): 35 tests passed, 0 failed, 0 skipped (35 total tests)

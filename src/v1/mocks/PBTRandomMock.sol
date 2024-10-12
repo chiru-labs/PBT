@@ -4,7 +4,9 @@ pragma solidity ^0.8.13;
 import "../PBTRandom.sol";
 
 contract PBTRandomMock is PBTRandom {
-    constructor(string memory name_, string memory symbol_, uint256 supply_) PBTRandom(name_, symbol_, supply_) {}
+    constructor(string memory name_, string memory symbol_, uint256 supply_)
+        PBTRandom(name_, symbol_, supply_)
+    {}
 
     function mint(address to, uint256 tokenId) public {
         _mint(to, tokenId);
@@ -14,7 +16,9 @@ contract PBTRandomMock is PBTRandom {
         return _tokenDatas[addr];
     }
 
-    function updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew) public {
+    function updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew)
+        public
+    {
         _updateChips(chipAddressesOld, chipAddressesNew);
     }
 
@@ -29,11 +33,10 @@ contract PBTRandomMock is PBTRandom {
         return _mintTokenWithChip(signatureFromChip, blockNumberUsedInSig);
     }
 
-    function getTokenDataForChipSignature(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
-        public
-        view
-        returns (TokenData memory)
-    {
+    function getTokenDataForChipSignature(
+        bytes calldata signatureFromChip,
+        uint256 blockNumberUsedInSig
+    ) public view returns (TokenData memory) {
         return _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
     }
 

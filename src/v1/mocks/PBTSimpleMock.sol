@@ -22,7 +22,9 @@ contract PBTSimpleMock is PBTSimple {
         return _tokenDatas[addr];
     }
 
-    function updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew) public {
+    function updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew)
+        public
+    {
         _updateChips(chipAddressesOld, chipAddressesNew);
     }
 
@@ -33,10 +35,10 @@ contract PBTSimpleMock is PBTSimple {
         return _mintTokenWithChip(signatureFromChip, blockNumberUsedInSig);
     }
 
-    function getTokenDataForChipSignature(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
-        public
-        returns (TokenData memory)
-    {
+    function getTokenDataForChipSignature(
+        bytes calldata signatureFromChip,
+        uint256 blockNumberUsedInSig
+    ) public view returns (TokenData memory) {
         return _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
     }
 }
