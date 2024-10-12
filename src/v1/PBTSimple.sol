@@ -36,7 +36,9 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     // Should only be called for tokenIds that have not yet been minted
     // If the tokenId has already been minted, use _updateChips instead
     // TODO: consider preventing multiple chip addresses mapping to the same tokenId (store a tokenId->chip mapping)
-    function _seedChipToTokenMapping(address[] memory chipAddresses, uint256[] memory tokenIds) internal {
+    function _seedChipToTokenMapping(address[] memory chipAddresses, uint256[] memory tokenIds)
+        internal
+    {
         _seedChipToTokenMapping(chipAddresses, tokenIds, true);
     }
 
@@ -63,7 +65,9 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
     // If the tokenId hasn't been minted yet, use _seedChipToTokenMapping instead
     // Should only be used and called with care and rails to avoid a centralized entity swapping out valid chips.
     // TODO: consider preventing multiple chip addresses mapping to the same tokenId (store a tokenId->chip mapping)
-    function _updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew) internal {
+    function _updateChips(address[] calldata chipAddressesOld, address[] calldata chipAddressesNew)
+        internal
+    {
         if (chipAddressesOld.length != chipAddressesNew.length) {
             revert ArrayLengthMismatch();
         }
@@ -123,14 +127,18 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         internal
         returns (uint256)
     {
-        TokenData memory tokenData = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
+        TokenData memory tokenData =
+            _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig);
         uint256 tokenId = tokenData.tokenId;
         _mint(_msgSender(), tokenId);
         emit PBTMint(tokenId, tokenData.chipAddress);
         return tokenId;
     }
 
-    function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig) public override {
+    function transferTokenWithChip(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
+        public
+        override
+    {
         transferTokenWithChip(signatureFromChip, blockNumberUsedInSig, false);
     }
 
@@ -147,7 +155,8 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         uint256 blockNumberUsedInSig,
         bool useSafeTransferFrom
     ) internal virtual {
-        uint256 tokenId = _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig).tokenId;
+        uint256 tokenId =
+            _getTokenDataForChipSignature(signatureFromChip, blockNumberUsedInSig).tokenId;
         if (useSafeTransferFrom) {
             _safeTransfer(ownerOf(tokenId), _msgSender(), tokenId, "");
         } else {
@@ -155,11 +164,10 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         }
     }
 
-    function _getTokenDataForChipSignature(bytes calldata signatureFromChip, uint256 blockNumberUsedInSig)
-        internal
-        view
-        returns (TokenData memory)
-    {
+    function _getTokenDataForChipSignature(
+        bytes calldata signatureFromChip,
+        uint256 blockNumberUsedInSig
+    ) internal view returns (TokenData memory) {
         // The blockNumberUsedInSig must be in a previous block because the blockhash of the current
         // block does not exist yet.
         if (block.number <= blockNumberUsedInSig) {
@@ -173,7 +181,8 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         }
 
         bytes32 blockHash = blockhash(blockNumberUsedInSig);
-        bytes32 signedHash = keccak256(abi.encodePacked(_msgSender(), blockHash)).toEthSignedMessageHash();
+        bytes32 signedHash =
+            keccak256(abi.encodePacked(_msgSender(), blockHash)).toEthSignedMessageHash();
         address chipAddr = signedHash.recover(signatureFromChip);
 
         TokenData memory tokenData = _tokenDatas[chipAddr];
