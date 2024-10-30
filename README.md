@@ -17,22 +17,16 @@ Note: the frontend library for chip signatures can be found [here](https://githu
 
 ## Import Into Your Project
 
+### Hardhat
+
 ```
 npm install @chiru-labs/pbt
 ```
 
 ### Foundry
 
-Add the following to your remappings.txt
-
 ```
-pbt=node_modules/@chiru-labs/pbt/src
-```
-
-Can then import in your contracts
-
-```
-import "pbt/v2/PBTSimple.sol";
+forge install https://github.com/chiru-labs/PBT
 ```
 
 ## Resources
