@@ -1,5 +1,7 @@
 ## PBT (Physical Backed Token)
 
+[![npm](https://img.shields.io/npm/v/@chiru-labs/pbt)](https://www.npmjs.com/package/@chiru-labs/pbt)
+
 NFT collectors enjoy collecting digital assets and sharing them with others online. However, there is currently no such standard for showcasing physical assets as NFTs with verified authenticity and ownership. Existing solutions are fragmented and tend to be susceptible to at least one of the following:
 
 - The NFT cannot proxy as ownership of the physical item. In most current implementations, the NFT and physical item are functionally two decoupled distinct assets after the NFT mint, in which the NFT can be freely traded independently from the physical item.
@@ -12,6 +14,20 @@ From the [Azuki](https://twitter.com/Azuki) team.
 **Chiru Labs is not liable for any outcomes as a result of using PBT**, DYOR. Repo still in beta.
 
 Note: the frontend library for chip signatures can be found [here](https://github.com/chiru-labs/pbt-chip-client).
+
+## Import Into Your Project
+
+### Hardhat
+
+```
+npm install @chiru-labs/pbt
+```
+
+### Foundry
+
+```
+forge install https://github.com/chiru-labs/PBT
+```
 
 ## Resources
 
