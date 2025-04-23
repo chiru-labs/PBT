@@ -14,7 +14,7 @@ contract ERC721ReadOnly is ERC721 {
     }
 
     function getApproved(uint256 tokenId) public view virtual override returns (address) {
-        require(_exists(tokenId), "ERC721: invalid token ID");
+        require(_ownerOf(tokenId) != address(0), "ERC721: invalid token ID");
         return address(0);
     }
 
@@ -27,14 +27,10 @@ contract ERC721ReadOnly is ERC721 {
     }
 
     function transferFrom(address, address, uint256) public virtual override {
-        revert("ERC721 public transferFrom not allowed");
-    }
-
-    function safeTransferFrom(address, address, uint256) public virtual override {
-        revert("ERC721 public safeTransferFrom not allowed");
+        revert("Use transferToken() instead of transferFrom()");
     }
 
     function safeTransferFrom(address, address, uint256, bytes memory) public virtual override {
-        revert("ERC721 public safeTransferFrom not allowed");
+        revert("Use transferToken() instead of safeTransferFrom()");
     }
 }
