@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import "./IPBT.sol";
 import "./ERC721ReadOnly.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 error InvalidSignature();
 error NoMintedTokenForChip();
@@ -19,6 +20,7 @@ error BlockNumberTooOld();
  */
 contract PBTSimple is ERC721ReadOnly, IPBT {
     using ECDSA for bytes32;
+    using MessageHashUtils for bytes32;  
 
     struct TokenData {
         uint256 tokenId;
@@ -54,7 +56,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         for (uint256 i = 0; i < tokenIdsLength; ++i) {
             address chipAddress = chipAddresses[i];
             uint256 tokenId = tokenIds[i];
-            if (throwIfTokenAlreadyMinted && _exists(tokenId)) {
+            if (throwIfTokenAlreadyMinted && _ownerOf(tokenId) != address(0)) {
                 revert SeedingChipDataForExistingToken();
             }
             _tokenDatas[chipAddress] = TokenData(tokenId, chipAddress, true);
@@ -80,7 +82,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
             address newChipAddress = chipAddressesNew[i];
             uint256 tokenId = oldTokenData.tokenId;
             _tokenDatas[newChipAddress] = TokenData(tokenId, newChipAddress, true);
-            if (_exists(tokenId)) {
+            if (_ownerOf(tokenId) != address(0)) {
                 emit PBTChipRemapping(tokenId, oldChipAddress, newChipAddress);
             }
             delete _tokenDatas[oldChipAddress];
@@ -89,7 +91,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
 
     function tokenIdFor(address chipAddress) external view override returns (uint256) {
         uint256 tokenId = tokenIdMappedFor(chipAddress);
-        if (!_exists(tokenId)) {
+        if (_ownerOf(tokenId) == address(0)) {
             revert NoMintedTokenForChip();
         }
         return tokenId;
@@ -109,7 +111,7 @@ contract PBTSimple is ERC721ReadOnly, IPBT {
         override
         returns (bool)
     {
-        if (!_exists(tokenId)) {
+        if (_ownerOf(tokenId) == address(0)) {
             revert NoMintedTokenForChip();
         }
         bytes32 signedHash = keccak256(payload).toEthSignedMessageHash();

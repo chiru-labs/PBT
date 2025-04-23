@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import "./IPBT.sol";
 import "./ERC721ReadOnly.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 error InvalidSignature();
 error InvalidChipAddress();
@@ -20,6 +21,7 @@ error BlockNumberTooOld();
  */
 contract PBTRandom is ERC721ReadOnly, IPBT {
     using ECDSA for bytes32;
+    using MessageHashUtils for bytes32;  
 
     struct TokenData {
         uint256 tokenId;
@@ -86,7 +88,7 @@ contract PBTRandom is ERC721ReadOnly, IPBT {
         override
         returns (bool)
     {
-        if (!_exists(tokenId)) {
+        if (_ownerOf(tokenId) == address(0)) {
             revert NoMintedTokenForChip();
         }
         bytes32 signedHash = keccak256(payload).toEthSignedMessageHash();
